@@ -44,18 +44,18 @@ opts_chunk$set(cache = TRUE, cache.lazy = FALSE, collapse=TRUE, fig.align="cente
 - Arbitrary filtering:
 
 >.small[[...] on a filtered data set, where we retain only genes with an estimated
-TPM above 1 in more than 25% of the considered cells.¹]
+TPM above 1 in more than 25% of the considered cells. (1)]
  
 >.small[Genes with less than 5 reads and expressed in
-less than 10 cells were removed.²] 
+less than 10 cells were removed. (2)] 
  
 >.small[Here, low-abundance genes are defined as those 
-with an average count below a filter threshold of 1 [count].³] 
+with an average count below a filter threshold of 1 [count]. (3)] 
  
 >.small[ Genes were filtered, keeping 15,633 out of 26,178 genes
 that were expressed in at least 5 out of 1,919 sequenced cells (RPKM 
 ≥ 10) and for which cells with expression came from at least 
-two different embryos.⁴]
+two different embryos. (4)]
 
 .tiny[.red[1] Soneson & Robinson, bioRxiv, 2017  
 .red[2] Stevant et al., bioRxiv, 2017  
@@ -66,9 +66,9 @@ two different embryos.⁴]
 
 ## Introduction
 
-- No domain standard for filtering.
+- No standard threshold for filtering.
 
-- Same Read count, FPKM, or TPM threshold might not be of the *same stringency*
+- Same threshold might not be of the *same stringency*
 in different datasets, notably across species.red[*].
 
 .footnote[.red[*] See Mansoki et al., Comput Biol Chem., 2016]
@@ -82,13 +82,13 @@ class: inverse
 - R package
 
 - Available on GitHub:  
-[github.com/gdevailly/scFeatureFilte](https://github.com/gdevailly/scFeatureFilter)
+[github.com/gdevailly/scFeatureFilter](https://github.com/gdevailly/scFeatureFilter)
 
 - Accepted in [Bioconductor](https://www.bioconductor.org/packages/devel/bioc/html/scFeatureFilter.html)
 
 .footnote[Need R ≥ 3.5 (*or edit DESCRIPTION to depends: R ≥ 3.4*)]
 
-- Might help to set an relevant expression threshold for feature filtering.
+- Might help to set a relevant expression threshold for feature filtering.
 
 ```{r loadingLibrary, cache=FALSE}
 library(scFeatureFilter)
@@ -96,7 +96,7 @@ library(scFeatureFilter)
 
 ---
 
-### Example datasets:
+## Example datasets:
 32 scRNA-seq of human embryonic stem cells .small[(Yan et al., Nat Struct Mol Biol, 2013.)]
 ```{r dimScData}
 dim(scData_hESC)
@@ -117,15 +117,22 @@ scData_hESC
 |ENSG00000000005.5  |   0.00|   0.00|   0.13|   0.00|
 |ENSG00000000419.11 |  53.97|  55.47|  41.87| 110.75|
 |ENSG00000000457.12 |   0.92|   0.22|   0.65|   0.87|
-|ENSG00000000460.15 |   7.08|   1.35|   5.42|  16.61|
-|ENSG00000000938.11 |   0.00|   0.00|   0.00|   0.00|
 ]
 
 .small[Expression matrices can  be either `data.frame`, `tibble`, `matrix` or `SingleCellExperiment`.]
 
 ---
 
-### Mean-variance exploration:
+## Mean-variance exploration:
+```{r meanVar0}
+calculate_cvs(scData_hESC, max_zeros = 0.75)[1:4, 1:5]
+
+```
+`max_zeros`: maximum proportion of `0` value for a feature to be kept
+
+---
+
+## Mean-variance exploration:
 ```{r meanVar1, fig.height=4, fig.width=5, out.width="56%", dpi=200}
 calculate_cvs(scData_hESC, max_zeros = 0.75) %>%
     plot_mean_variance(colourByBin = FALSE) +
@@ -134,7 +141,7 @@ calculate_cvs(scData_hESC, max_zeros = 0.75) %>%
 
 ---
 
-### Binning of the genes:
+## Binning of the genes:
 ```{r meanVar2, collapse=TRUE, message=FALSE, fig.height=4, fig.width=5, out.width="56%", dpi=200}
 scData_hESC %>%
     calculate_cvs %>%
@@ -145,7 +152,7 @@ scData_hESC %>%
 ```
 
 ---
-### Assumptions
+## Assumptions
 
 .pull-left[
 ```{r meanVar3, echo=FALSE, message=FALSE, fig.height=4, fig.width=5, out.width="100%", dpi=200}
@@ -167,7 +174,7 @@ scData_hESC %>%
 
 ---
 
-### Correlation of the data:
+## Correlation of the data:
 - **A reference set of genes**: the top bin  
 
 - Three control sets of genes: shuffling of the expression values of the reference set
@@ -183,7 +190,7 @@ corDistrib <- scData_hESC %>%
 
 ---
 
-### Correlation of the data
+## Correlation of the data
 ```{r plotCor, collapse=TRUE, message=FALSE, fig.height=4, fig.width=6, out.width="80%", dpi=300}
 corDens <- correlations_to_densities(corDistrib)
 plot_correlations_distributions(corDens, facet_ncol = 6) +
@@ -192,7 +199,7 @@ plot_correlations_distributions(corDens, facet_ncol = 6) +
 
 ---
 
-### Correlation of the data
+## Correlation of the data
 ```{r plotCor2, collapse=TRUE, message=FALSE, fig.height=4, fig.width=6, out.width="80%", dpi=300}
 metrics <- get_mean_median(corDistrib)
 plot_correlations_distributions(corDens,  metrics = metrics, facet_ncol = 6) +
@@ -201,28 +208,28 @@ plot_correlations_distributions(corDens,  metrics = metrics, facet_ncol = 6) +
 
 ---
 
-### Threshold decision
+## Threshold decision
 ```{r threshold1, collapse=TRUE, fig.height=4, fig.width=5, out.width="76%", dpi=300}
 plot_metric(metrics, show_ctrl = FALSE, show_threshold = FALSE)
 ```
 
 ---
 
-### Threshold decision
+## Threshold decision
 ```{r threshold2, collapse=TRUE, fig.height=4, fig.width=5, out.width="76%", dpi=300}
 plot_metric(metrics, show_ctrl = TRUE, show_threshold = FALSE)
 ```
 
 ---
 
-### Threshold decision
+## Threshold decision
 ```{r threshold3, collapse=TRUE, fig.height=4, fig.width=5, out.width="76%", dpi=300}
 plot_metric(metrics, show_ctrl = TRUE, show_threshold = TRUE, threshold = 2)
 ```
 
 ---
 
-### Geting back the filtered expression matrix:
+## Geting back the filtered expression matrix:
 ```{r getBack0, message=FALSE}
 binned_data <- scData_hESC %>%
     calculate_cvs %>%
@@ -256,18 +263,22 @@ dim(filtered_data)
 
 
 ---
+
 class: inverse
 # Testing `scFeatureFilter`
----
 
-### Testing `scFeatureFilter` on more datasets:  
+---
+class: center
+
+## Testing `scFeatureFilter` on more datasets:  
 .medium[16 datasets from [ConquerDB](http://imlspenticton.uzh.ch:3838/conquer/) (human and mouse)]
 ![:scale 68%](img/conquer.png)
 
 ---
+class: center
 
-### `scFeatureFilter` on bulk RNA-seq:  
-.medium[48 repplicated bulk RNA-seq (yeast)] .tiny[(Gierliński et al., Bioinformatics, 2015)]
+## `scFeatureFilter` on bulk RNA-seq:  
+.medium[48 repplicated bulk RNA-seq (yeast)] .tiny[(Gierlinski et al., Bioinformatics, 2015)]
 ![:scale 60%](img/yeast.png)
 
 ---
@@ -276,7 +287,7 @@ class: inverse
 # Limits of `scFeatureFilter`
 
 ---
-### Lots of parameters?
+## Lots of parameters?
 .medium[
 |parameter           |description                                       |default|
 |:-------------------|:-------------------------------------------------|------:|
@@ -286,12 +297,10 @@ class: inverse
 |`threshold`         | stringency of the selection                      |      2|
 ]
 
-#
-*vs* 1 or 2 parameters for arbitrary cut-off
 
 ---
 
-### Lots of parameters?
+## Lots of parameters?
 The method is robust to `other_window_size`:
 
 ```{r winSize, echo=FALSE, fig.height=3.6, fig.width=7, out.width="100%", dpi = 300}
@@ -328,20 +337,21 @@ plot_grid(
 ```
 
 ---
-### Robust to `max_zeros`?
+## Robust to `max_zeros`?
 high proportion of 0s ~= low expression
 
 - mostly not in the reference set  
 
-- more abundant in the low expression bins (filtered) 
+- more abundant in the low expression bins
 
-- less abundant in the high expression bins (ketp)
+- less abundant in the high expression bins
 
+## `threshold` is a feature
 `threshold`: More or less stringency depending of the use cases and user preference.
 
 ---
 
-### Lots of parameters?
+## `top_window_size`
 `top_window_size` can have *massive* impact:
 
 - if **too big**: Risk of selecting everything.
@@ -349,10 +359,9 @@ high proportion of 0s ~= low expression
 
 ~100 seems to be a sweet spot on mouse and human data.
 
-*Can we prove it?*
 
 ---
-### Lots of parameters?
+## `top_window_size`
 Average auto-correlation of the top window depending on its size:
 ```{r topWinSize, fig.height=4, fig.width=5, out.width="55%", dpi = 300}
 plot_top_window_autocor(calculate_cvs(scData_hESC))
@@ -391,8 +400,6 @@ class: inverse
 Anagha Joshi
 
 Angeles Arzalluz-Luque
-
-Anagha Joshi
 
 Anna Mantsoki
 ]

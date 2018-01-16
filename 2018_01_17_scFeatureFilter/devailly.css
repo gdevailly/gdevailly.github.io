@@ -103,9 +103,9 @@ thead, tfoot, tr:nth-child(even) { background: #eee }
 }
 
 .remark-slide-content {
-  padding-top: 2px;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding-top: 6px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 .remark-slide-content > h1:first-of-type {
   margin-top: 0px;
@@ -120,3 +120,7 @@ thead, tfoot, tr:nth-child(even) { background: #eee }
   margin-top: 0px;
 }
 
+.myCenter {
+    margin-left: auto;
+    margin-right: auto;
+}
