@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Web applications for human epigenomics</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Guillaume Devailly" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/rladies.css" rel="stylesheet" />
+    <link href="libs/remark-css/rladies-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="devailly.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+class: inverse, center, middle
+
+#Web applications for human epigenomics
+
+.pull-left[
+### EPIGEN2018
+2018-03-14
+]
+
+.pull-right[
+### Guillaume Devailly
+[@G_Devailly](https://twitter.com/G_Devailly)
+
+![:img_scale 100%](img/GenPhySE-INRA.png)
+
+]
+
+.right[
+*![:font_scale 70%](Slides available online. Feel free to share.)*
+]
+---
+class: largetext
+
+# Why web applications?
+
+- easy to access
+- easy to use *(?)*
+- fancy and attracting
+
+**→ Allow user to do things they won't have done otherwise**
+
+--
+### *but...*
+
+- someone has to develop and maintain them...
+- (almost) no flexibility
+- apps appears and disapears often
+
+---
+class: inverse, largetext
+
+# Types of web-apps for epigenomics
+
+.pull-left[
+1. Data portals
+
+2. Genome browsers
+
+3. Compare experiments
+
+4. Analyse
+]
+
+---
+class: inverse, largetext
+count: false
+
+# Types of web-apps for epigenomics
+
+.pull-left[
+1. Data portals
+
+2. ![:my_color grey](Genome browsers)
+
+3. ![:my_color grey](Compare experiments)
+
+4. ![:my_color grey](Analyse)
+]
+
+.pull-right[
+![Data portal example :img_scale 100%](img/IHEC_dp.png)
+]
+
+---
+layout: true
+
+# Data portals
+
+---
+class: large
+
+- An eagle-eye view of available data.
+- Easier to use than SRA / GEO searches
+---
+
+### A precursor: [ENCODE @ UCSC](https://genome.ucsc.edu/encode/dataMatrix/encodeDataMatrixHuman.html)
+
+.center[
+&lt;video width="650" height="auto" controls loop style="border: 1px solid gray;"&gt;
+  &lt;source src="vid/encode_old.webm" type="video/webm"&gt;
+Your browser does not support the video tag.
+&lt;/video&gt; 
+]
+
+### *unmaintained since 2012*
+
+---
+### Modern [ENCODE data portal](https://www.encodeproject.org/)
+.center[
+&lt;video width="650" height="auto" controls loop style="border: 1px solid gray;"&gt;
+  &lt;source src="vid/new_encode.webm" type="video/webm"&gt;
+Your browser does not support the video tag.
+&lt;/video&gt; 
+]
+
+---
+layout: false
+## Other consortia
+.pull-left[
+![](img/RoadmapEpigenomics.png)
+
+![](img/roadmap_dp.png)
+]
+.pull-right[
+![](img/logoblueprint.png)
+
+![](img/blueprint_dp.png)
+]
+
+---
+## International Human Epigenome Consortium [(IHEC)](http://epigenomesportal.ca/ihec/index.html)
+.pull-left[
+&lt;video width="650" height="auto" controls autoplay loop style="border: 1px solid gray;"&gt;
+  &lt;source src="vid/ihec_hg19_hg38.webm" type="video/webm"&gt;
+Your browser does not support the video tag.
+&lt;/video&gt; 
+]
+.pull-right[
+![](img/IHEC_dp.png)
+]
+
+---
+# Data portals
+
+Portals browsing SRA/ENA public datasets:
+- **[codex.stemcells.cam.ac.uk](http://codex.stemcells.cam.ac.uk/)**: TF &amp; HisMod ChIP-seq, RNA-seq, DNase-seq in Haematopoietic Cells, or Embryonic Stem Cells
+
+- **[cistrome.org](http://cistrome.org)**: TF &amp; HisMod &amp; DNase/ATAC, all cell types &amp; tissues
+
+- **[ngs-qc.org](http://www.ngs-qc.org)**: Almost everything (TF, HisMod, RNA, MeDP, ...), all cell types &amp; tissues, assess dataset quality
+
+### → Finding data is easy
+
+---
+class: inverse, largetext
+count: false
+
+# Types of web-apps for epigenomics
+
+.pull-left[
+1. ![:my_color grey](Data portals)
+
+2. Genome browsers
+
+3. ![:my_color grey](Compare experiments)
+
+4. ![:my_color grey](Analyse)
+]
+.pull-right[
+![:img_scale 100%](img/encode_gb.png)
+]
+
+---
+class: largetext
+
+# Online Genome browsers
+- quick look at the data
+
+- looking at a few regions manualy
+
+- Sometimes ♥ *integrated to the Data portal* ♥
+
+---
+## ENCODE quick view genome browser
+.center[
+&lt;video width="800" height="auto" controls loop style="border: 1px solid gray;"&gt;
+  &lt;source src="vid/encode_gb.webm" type="video/webm"&gt;
+Your browser does not support the video tag.
+&lt;/video&gt; 
+]
+
+---
+## Roadmap *Chromatin states* browser
+.center[
+[egg2.wustl.edu/roadmap/web_portal/chr_state_learning.html](http://egg2.wustl.edu/roadmap/web_portal/chr_state_learning.html)
+
+&lt;video width="800" height="auto" controls loop style="border: 1px solid gray;"&gt;
+  &lt;source src="vid/roadmap_chromatin_states.webm" type="video/webm"&gt;
+Your browser does not support the video tag.
+&lt;/video&gt; 
+
+*Uses the great [WahsU EpiGenome Browser](http://epigenomegateway.wustl.edu/browser/)*
+
+]
+
+---
+# Other great options
+
+- **Ensembl** regulatory build
+
+- **Cistrome** send any tracks to the WashU EpiBrowser in a single click
+
+- **NGS-QC** is developing [NAVi](http://www.ngs-qc.org/navi/index.php)
+.center[
+![:img_scale 80%](img/NAVi.png)
+]
+
+---
+## Most of the time...
+
+.center[
+Old &amp; unfriendly
+**or**
+New &amp; buggy ?
+
+&lt;video width="800" height="auto" controls loop style="border: 1px solid gray;"&gt;
+  &lt;source src="vid/blueprint.webm" type="video/webm"&gt;
+Your browser does not support the video tag.
+&lt;/video&gt; 
+]
+
+---
+
+class: inverse, largetext
+count: false
+
+# Types of web-apps for epigenomics
+
+.pull-left[
+1. ![:my_color grey](Data portals)
+
+2. ![:my_color grey](Genome browsers)
+
+3. Compare experiments
+
+4. ![:my_color grey](Analyse)
+]
+.pull-right[
+![:img_scale 100%](img/Heatstarseq.png)
+]
+
+---
+# Heat*seq: genome-wide comparison of NGS experiments
+- RNA-seq, TF-ChIP-seq, CAGE
+
+- Compare a processed file you upload to all expriments in a dataset
+
+- available at [www.heatstarseq.roslin.ed.ac.uk](http://www.heatstarseq.roslin.ed.ac.uk/)
+
+.center[
+![:img_scale 50%](img/Heatrnaseq.png)
+]
+
+---
+class: largetext
+
+# Clustered correlation heatmaps:
+
+- Corelation of every pairs of experiment
+
+- Clustering of the correlation matrix
+
+- Two similar experiment will be close on the clustered correlation heatmap
+
+.center[
+![:img_scale 60%](img/corhm.png)
+]
+
+---
+# Heat*seq: genome-wide comparison of NGS experiments
+
+Example: ESR1 TF ChIP-seq from GEO, compared against all TF ChIP-seq from ENCODE
+
+.center[
+&lt;video width="800" height="auto" controls loop style="border: 1px solid gray;"&gt;
+  &lt;source src="vid/HeatChIPseq.webm" type="video/webm"&gt;
+Your browser does not support the video tag.
+&lt;/video&gt; 
+]
+
+Input file: peak list, *.bed* format.
+
+---
+# Alternatives:
+
+**CODEX** Correlation analysis 
+.center[
+![:img_scale 45%](img/codex_ca.png)
+]
+
+---
+class: inverse, largetext
+count: false
+
+# Types of web-apps for epigenomics
+
+.pull-left[
+1. ![:my_color grey](Data portals)
+
+2. ![:my_color grey](Genome browsers)
+
+3. ![:my_color grey](Compare experiments)
+
+4. Analyse
+]
+.pull-right[
+![:img_scale 100%](img/perepigenomics.png)
+]
+
+---
+# Profile Explorer for Roadmap Epigenomics
+
+.pull-left[
+[www.perepigenomics.roslin.ed.ac.uk](http://www.perepigenomics.roslin.ed.ac.uk/)
+
+Using Roadmap Epigenomics data:
+- Stack profiles
+
+- Centered on a feature (here, TSS)
+
+- Sorted according to expression (RNA-seq)
+] 
+
+.pull-right[
+*H3K9Ac, adult liver*
+![:img_scale 80%](img/H3K9ac_tss_E066_all.png)
+]
+
+---
+# Profile Explorer for Roadmap Epigenomics
+
+.pull-left[
+Pregenerated *stack profiles*:
+- TSS, TES, middle exons
+
+- By gene types (all, protein coding, lincRNA, pseudogenes, ...)
+
+- WGBS, DNAse1, H2AZ, 10 histone methylations, 16 Histone acetylations
+
+- 30 cell types (cell lines + tissues)
+
+→ 9 921 plots so far
+]
+.pull-right[
+![:img_scale 100%](img/explosion.png)
+]
+
+---
+# Profile Explorer for Roadmap Epigenomics
+
+.center[
+&lt;video width="1000" height="auto" controls loop style="border: 1px solid gray;"&gt;
+  &lt;source src="vid/perepigenomics.webm" type="video/webm"&gt;
+Your browser does not support the video tag.
+&lt;/video&gt; 
+]
+
+---
+class: center
+layout: true
+
+---
+WGBS, pancreas
+
+![:img_scale 70%](img/wgbs_tss_E098_all.png)
+
+---
+H3K36me3, fetal large intestine
+
+![:img_scale 50%](img/H3K36me3.png)
+
+---
+layout: false
+class: largetext
+# Alternatives
+
+Tools from *Blueprint Epigenome*:
+- *Blueprint* data anlaysis portal: [blueprint-data.bsc.es/release_2016-08](http://blueprint-data.bsc.es/release_2016-08/) 
+
+- *DeepBlue* analysis server: [deepblue.mpi-inf.mpg.de](http://deepblue.mpi-inf.mpg.de/)
+
+- Dive (in early development): [dive.mpi-inf.mpg.de](http://dive.mpi-inf.mpg.de)
+
+Galaxy servers, notably:
+- *deepTools*: [deeptools.ie-freiburg.mpg.de](http://deeptools.ie-freiburg.mpg.de/)
+
+- *Cistrome*: [cistrome.org/ap/root](http://cistrome.org/ap/root)
+
+---
+class: inverse, largetext
+
+# Thanks
+.pull-left[
+Anagha Joshi
+
+Anna Mantsoki
+
+Deepti Vipin
+]
+.pull-right[
+![:img_scale 35%](img/logo.png)
+![:img_scale 55%](img/GenPhySE-INRA.png)
+]
+    </textarea>
+<script src="libs/remark-latest.min.js"></script>
+<script src="libs/devailly.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9",
+"slideNumberFormat": "Adebiotech EPIGEN2018 %current% / %total%"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+  }
+});
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+.remark-slide-content { font-size: 150%; }
+
+.remark-slide-content {
+  padding-top: 10px;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.remark-slide-content > h1 {
+  margin-top: 5px;
+}
+.remark-slide-content > h2 {
+  margin-top: 5px;
+}
+.remark-slide-content > h3 {
+  margin-top: 5px;
+}
+.remark-slide-content > p {
+  margin-top: 5px;
+}
+
+.largetext { font-size: 200%; }
