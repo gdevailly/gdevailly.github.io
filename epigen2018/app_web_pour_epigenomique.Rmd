@@ -54,7 +54,7 @@ class: largetext
 - easy to use *(?)*
 - fancy and attracting
 
-**→ Allow users to do things they won't have done otherwise**
+**→ Allow users to do things they wouldn't have done otherwise**
 
 --
 ### *but...*
@@ -312,9 +312,13 @@ Input file: peak list, *.bed* format.
 
 **CODEX** Correlation analysis 
 .center[
-![:img_scale 45%](img/codex_ca.png)
+![:img_scale 20%](img/codex_ca.png)
 ]
 
+**NGS-QC Comparator** [ngs-qc.org/qcgenomics/](http://www.ngs-qc.org/qcgenomics/)
+.center[
+![:img_scale 20%](img/comparator.png)
+]
 ---
 class: inverse, largetext
 count: false
@@ -398,7 +402,6 @@ H3K36me3, fetal large intestine
 
 ---
 layout: false
-class: largetext
 # Alternatives
 
 Tools from *Blueprint Epigenome*:
@@ -407,6 +410,8 @@ Tools from *Blueprint Epigenome*:
 - *DeepBlue* analysis server: [deepblue.mpi-inf.mpg.de](http://deepblue.mpi-inf.mpg.de/)
 
 - Dive (in early development): [dive.mpi-inf.mpg.de](http://dive.mpi-inf.mpg.de)
+
+NGS-QC ChromStater [ngs-qc.org/qcgenomics/](http://www.ngs-qc.org/qcgenomics/)
 
 Galaxy servers, notably:
 - *deepTools*: [deeptools.ie-freiburg.mpg.de](http://deeptools.ie-freiburg.mpg.de/)
