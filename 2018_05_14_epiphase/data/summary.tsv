@@ -1,0 +1,29 @@
+mark	gene by gene	cell type by cell type	
+WGBS	negative	negative	
+DNAse	positive	positive	
+H2A.Z	balanced	positive	
+H3K4me1	positive	positive	
+H3K4me2	positive	positive	
+H3K4me3	positive	positive	
+H3K9me3	unclear	unclear	no
+H3K23me2	NA	positive	
+H3K27me3	negative	negative – variable	
+H3K36me3	positive	positive	no
+H3K79me1	positive	positive	no
+H3K79me2	balanced	positive	no
+H2AK5ac	positive	positive	
+H2BK120ac	positive	positive	
+H2BK12ac	positive	positive	
+H2BK15ac	balanced	positive	
+H2BK20ac	NA	neutral	
+H2BK5ac	positive	positive	
+H3K4ac	positive	positive	
+H3K9ac	positive	positive	
+H3K14ac	positive	positive	
+H3K18ac	positive	positive	
+H3K23ac	positive	positive	
+H3K27ac	positive	positive	
+H3K56ac	NA	positive	
+H4K8ac	positive	positive	
+H4K12ac	NA	positive	
+H4K91ac	positive	positive	
