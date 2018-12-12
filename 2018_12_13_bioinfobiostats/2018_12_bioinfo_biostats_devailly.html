@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Epigenetic marks and the human transcript diversity</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Guillaume Devailly" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets/htmlwidgets.js"></script>
+    <script src="libs/plotly-binding/plotly.js"></script>
+    <script src="libs/typedarray/typedarray.min.js"></script>
+    <script src="libs/jquery/jquery.min.js"></script>
+    <link href="libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
+    <script src="libs/crosstalk/js/crosstalk.min.js"></script>
+    <link href="libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+    <script src="libs/plotly-main/plotly-latest.min.js"></script>
+    <script src="libs/kePrint/kePrint.js"></script>
+    <link rel="stylesheet" href="libs/my_metropolis.css" type="text/css" />
+    <link rel="stylesheet" href="libs/my_metropolis-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+class: inverse, middle, font180
+
+# Epigenetic marks and the human transcript diversity
+
+![:img_scale 40%](img/GenPhySE-INRA.png)
+### GenEpi@Genphyse
+#### Guillaume Devailly - 2018/12/13
+#### [@G_Devailly](https://twitter.com/G_Devailly)
+
+---
+class: font180
+
+# Introduction
+
+- Abundant epigenomic data for model organisms.
+- Under-utilised?
+- Epigenomic data will soon be abundant for agricultural species too.
+
+## Dataset: ![](img/RoadmapEpigenomics.png)
+- RNA-seq
+- DNAse1
+- WGBS,  10 different histone methylations, 17 different histone acetylations
+- 33 cell lines &amp; tissues
+
+---
+class: font160
+
+# Objectives
+
+.pull-left[
+- Systemic correlation of marks and **gene** transcription level:
+  - at TSS
+  - at TTS
+- Systemic correlation of marks and **exon**:
+  - transcription level
+  - inclusion ratio
+- For **all** genes/exons in **each** cell type.
+- For **each** gene/exon in **all** cell types.
+
+]
+.pull-right[
+![:img_scale 80%](img/H3K4me3_TSS_gene_FPKM_E066_all.png)
+]
+
+---
+class: font180
+
+# Methodology
+
+**Processed data** taken from RoadmapEpigenomics:
+- CpG methylation ratios
+- DNAse-seq and ChIP-seq coverage
+
+**Reprocessing** of fastq for Gene TPM, exon TPM &amp; exon inclusion ratio (aka %spliced, or `\(\psi\)`):
+- pseudo-mapping and quantification with [Salmon](https://combine-lab.github.io/salmon/)
+- exon `\(\psi\)` for exon **e** of gene **g** using *tpm* quantification of transcripts **t**:
+`$$\psi_{eg} = \frac{\sum_{t\subset e} tpm_t}{\sum_{t\in g} tpm_t}$$`
+
+---
+class: font180
+
+# What is a gene?
+.pull-left[
+![:img_scale 100%](img/gencode22.png)
+]
+.pull-right[
+![:img_scale 53%](img/gene_types.png)
+]
+
+---
+class: font180
+
+# Where is BRCA1's Transcription Start Site (TSS)?
+![:img_scale 68%](img/Human_BRCA1_anno2.png)
+
+---
+class: font180
+
+# DNA methylation: ratio *and* density
+
+![:img_scale 90%](img/mCpG_density.svg)
+
+
+---
+class: font180
+
+# DNA methylation: ratio *and* density
+
+![:img_scale 100%](img/dname_ex1.png)
+
+---
+class: font180
+
+# DNA methylation: ratio *and* density
+
+![:img_scale 100%](img/dname_ex2.png)
+
+---
+class: font180, center
+
+# Promoter DNA methylaton
+
+Lung, all genes
+
+![:img_scale 64%](img/wgbs_TSS_gene_FPKM_E096_all.png)
+
+---
+class: font180, center
+
+# Promoter DNA methylaton
+
+Lung, protein coding genes
+
+![:img_scale 64%](img/wgbs_TSS_gene_FPKM_E096_protein_coding.png)
+
+---
+class: font180, center
+
+# Promoter DNA methylaton
+
+.pull-left[
+Lung, lincRNA genes
+
+![:img_scale 100%](img/wgbs_TSS_gene_FPKM_E096_lincRNA.png)
+]
+
+.pull-right[
+Lung, processed pseudogenes
+
+![:img_scale 100%](img/wgbs_TSS_gene_FPKM_E096_processed_pseudogene.png)
+]
+
+---
+class: font140, center
+
+# Activating marks
+
+.pull-left[
+DNAse-seq, all genes, H1-derived mesoderm
+
+![:img_scale 85%](img/dnase1_TSS_gene_FPKM_E004_all.png)
+]
+
+.pull-right[
+H3K9ac ChIP-seq, all genes, H1-derived mesoderm
+
+![:img_scale 85%](img/H3K9ac_TSS_gene_FPKM_E004_all.png)
+]
+
+---
+class: font140, center
+
+# Repressing marks
+
+.pull-left[
+H3K27me3, all genes, Thymus
+
+![:img_scale 85%](img/H3K27me3_TSS_gene_FPKM_E112_all.png)
+]
+
+--
+
+.pull-right[
+H3K27me3, protein coding genes, Thymus
+
+![:img_scale 85%](img/H3K27me3_TSS_gene_FPKM_E112_protein_coding.png)
+]
+
+---
+class: font180, center
+
+# Assymetric marks
+
+H3K79me2, protein coding genes, H1-derived mesoderm
+
+![:img_scale 41%](img/H3K79me2_TSS_gene_FPKM_E004_protein_coding.png)
+
+---
+class: font180, center
+
+# Exonic marks
+
+H3K36me3, fetal large intestine
+
+![:img_scale 45%](img/H3K36me3.png)
+
+---
+# A role in alternative splicing?
+
+H3K36me3, HUES64 cell line
+
+.pull-left[
+![:img_scale 84%](img/H3K36me3_exonFpkm_E016.png)
+]
+
+.pull-right[
+![:img_scale 84%](img/H3K36me3_exonPsi_E016.png)
+]
+
+---
+class: font180
+
+# Cell by cell *vs* gene by gene
+
+.pull-left[
+WGBS, adult liver
+![](img/wgbs_TSS_gene_FPKM_E066_all.png)
+]
+
+--
+
+.pull-right[
+<div id="htmlwidget-12f1bf74da8ee4ed262a" style="width:504px;height:504px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-12f1bf74da8ee4ed262a">{"x":{"data":[{"x":[0.00316054840450075,0.0104448345115661,0.0177291206186314,0.0250134067256967,0.032297692832762,0.0395819789398274,0.0468662650468927,0.054150551153958,0.0614348372610233,0.0687191233680886,0.076003409475154,0.0832876955822193,0.0905719816892846,0.0978562677963499,0.105140553903415,0.112424840010481,0.119709126117546,0.126993412224611,0.134277698331677,0.141561984438742,0.148846270545807,0.156130556652872,0.163414842759938,0.170699128867003,0.177983414974068,0.185267701081134,0.192551987188199,0.199836273295264,0.20712055940233,0.214404845509395,0.22168913161646,0.228973417723526,0.236257703830591,0.243541989937656,0.250826276044722,0.258110562151787,0.265394848258852,0.272679134365918,0.279963420472983,0.287247706580048,0.294531992687114,0.301816278794179,0.309100564901244,0.31638485100831,0.323669137115375,0.33095342322244,0.338237709329505,0.345521995436571,0.352806281543636,0.360090567650701,0.367374853757767,0.374659139864832,0.381943425971897,0.389227712078963,0.396511998186028,0.403796284293093,0.411080570400159,0.418364856507224,0.425649142614289,0.432933428721355,0.44021771482842,0.447502000935485,0.454786287042551,0.462070573149616,0.469354859256681,0.476639145363747,0.483923431470812,0.491207717577877,0.498492003684943,0.505776289792008,0.513060575899073,0.520344862006138,0.527629148113204,0.534913434220269,0.542197720327334,0.5494820064344,0.556766292541465,0.56405057864853,0.571334864755596,0.578619150862661],"y":[1.17193863545775,1.15216450566716,1.13239037587658,1.11261624608599,1.0928421162954,1.07306798650482,1.05329385671423,1.03351972692364,1.01374559713306,0.993971467342469,0.974197337551882,0.954423207761295,0.934649077970709,0.914874948180122,0.895100818389535,0.875326688598948,0.855552558808362,0.835778429017775,0.816004299227188,0.796230169436601,0.776456039646015,0.756681909855428,0.736907780064841,0.717133650274254,0.697359520483668,0.677585390693081,0.657811260902494,0.638037131111907,0.618263001321321,0.598488871530734,0.578714741740147,0.55894061194956,0.539166482158973,0.519392352368387,0.4996182225778,0.479844092787213,0.460069962996626,0.44029583320604,0.420521703415453,0.400747573624866,0.380973443834279,0.361199314043693,0.341425184253106,0.321651054462519,0.301876924671933,0.282102794881346,0.262328665090759,0.242554535300172,0.222780405509585,0.203006275718999,0.183232145928412,0.163458016137825,0.143683886347238,0.123909756556652,0.104135626766065,0.084361496975478,0.0645873671848916,0.0448132373943047,0.025039107603718,0.00526497781313107,-0.0145091519774556,-0.0342832817680425,-0.054057411558629,-0.0738315413492159,-0.0936056711398026,-0.113379800930389,-0.133153930720976,-0.152928060511563,-0.17270219030215,-0.192476320092736,-0.212250449883323,-0.23202457967391,-0.251798709464497,-0.271572839255084,-0.29134696904567,-0.311121098836257,-0.330895228626844,-0.35066935841743,-0.370443488208017,-0.390217617998604],"text":"","type":"scatter","mode":"lines","name":"fitted values","line":{"width":3.77952755905512,"color":"rgba(51,102,255,1)","dash":"dot"},"hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.00316054840450075],"y":[1.94825154256294],"text":"BLD.MOB.CD34.PC.F","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(248,118,109,1)"}},"hoveron":"points","name":"BLD.MOB.CD34.PC.F","legendgroup":"BLD.MOB.CD34.PC.F","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.578619150862661],"y":[0.0326187608507199],"text":"BRN.CRTX.DR.NRSPHR","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(240,126,77,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(240,126,77,1)"}},"hoveron":"points","name":"BRN.CRTX.DR.NRSPHR","legendgroup":"BRN.CRTX.DR.NRSPHR","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.474270755712551],"y":[0.00817418400642635],"text":"BRN.GANGEM.DR.NRSPHR","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(231,134,25,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(231,134,25,1)"}},"hoveron":"points","name":"BRN.GANGEM.DR.NRSPHR","legendgroup":"BRN.GANGEM.DR.NRSPHR","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.295858828821127],"y":[0.617838747717003],"text":"BRN.GRM.MTRX","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(219,142,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(219,142,0,1)"}},"hoveron":"points","name":"BRN.GRM.MTRX","legendgroup":"BRN.GRM.MTRX","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.252406406714177],"y":[0.902002891350729],"text":"BRN.HIPP.MID","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(206,149,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(206,149,0,1)"}},"hoveron":"points","name":"BRN.HIPP.MID","legendgroup":"BRN.HIPP.MID","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.255905732109217],"y":[0.166430113843283],"text":"ESC.4STAR","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(191,156,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(191,156,0,1)"}},"hoveron":"points","name":"ESC.4STAR","legendgroup":"ESC.4STAR","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.345252615010015],"y":[0.178976947293169],"text":"ESC.H1","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(174,162,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(174,162,0,1)"}},"hoveron":"points","name":"ESC.H1","legendgroup":"ESC.H1","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.282123940170781],"y":[0.17868923977559],"text":"ESC.HUES64","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(154,168,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(154,168,0,1)"}},"hoveron":"points","name":"ESC.HUES64","legendgroup":"ESC.HUES64","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.338292277702198],"y":[0.252124552505644],"text":"ESDR.CD184.ENDO","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(130,173,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(130,173,0,1)"}},"hoveron":"points","name":"ESDR.CD184.ENDO","legendgroup":"ESDR.CD184.ENDO","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.327857465708273],"y":[0.225567713439471],"text":"ESDR.CD56.ECTO","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(100,178,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(100,178,0,1)"}},"hoveron":"points","name":"ESDR.CD56.ECTO","legendgroup":"ESDR.CD56.ECTO","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.243667846383384],"y":[0.960090067904919],"text":"ESDR.CD56.MESO","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(50,182,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(50,182,0,1)"}},"hoveron":"points","name":"ESDR.CD56.MESO","legendgroup":"ESDR.CD56.MESO","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.21999183310084],"y":[0.185825359612962],"text":"ESDR.H1.BMP4.MESO","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,186,56,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,186,56,1)"}},"hoveron":"points","name":"ESDR.H1.BMP4.MESO","legendgroup":"ESDR.H1.BMP4.MESO","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.299110187814634],"y":[0.0429690733931801],"text":"ESDR.H1.BMP4.TROP","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,189,92,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,189,92,1)"}},"hoveron":"points","name":"ESDR.H1.BMP4.TROP","legendgroup":"ESDR.H1.BMP4.TROP","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.203003974305245],"y":[0.209515014542631],"text":"ESDR.H1.MSC","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,120,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,191,120,1)"}},"hoveron":"points","name":"ESDR.H1.MSC","legendgroup":"ESDR.H1.MSC","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.364600861195034],"y":[0.298853076409707],"text":"ESDR.H1.NEUR.PROG","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,192,145,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,192,145,1)"}},"hoveron":"points","name":"ESDR.H1.NEUR.PROG","legendgroup":"ESDR.H1.NEUR.PROG","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.0833976962496815],"y":[1.10731174549067],"text":"GI.CLN.SIG","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,193,167,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,193,167,1)"}},"hoveron":"points","name":"GI.CLN.SIG","legendgroup":"GI.CLN.SIG","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.119834724410984],"y":[0.843108141999607],"text":"GI.ESO","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,192,187,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,192,187,1)"}},"hoveron":"points","name":"GI.ESO","legendgroup":"GI.ESO","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.122400001604626],"y":[0.483444648098535],"text":"GI.L.INT.FET","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,190,205,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,190,205,1)"}},"hoveron":"points","name":"GI.L.INT.FET","legendgroup":"GI.L.INT.FET","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.0934185678327754],"y":[0.937066312017428],"text":"GI.S.INT","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,186,222,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,186,222,1)"}},"hoveron":"points","name":"GI.S.INT","legendgroup":"GI.S.INT","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.332589287168289],"y":[0.374014740291912],"text":"GI.S.INT.FET","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,181,237,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,181,237,1)"}},"hoveron":"points","name":"GI.S.INT.FET","legendgroup":"GI.S.INT.FET","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.0900075184297048],"y":[0.872389388417821],"text":"GI.STMC.GAST","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,174,249,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,174,249,1)"}},"hoveron":"points","name":"GI.STMC.GAST","legendgroup":"GI.STMC.GAST","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.0526569056754552],"y":[0.898560644939712],"text":"HRT.ATR.R","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,166,255,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,166,255,1)"}},"hoveron":"points","name":"HRT.ATR.R","legendgroup":"HRT.ATR.R","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.0682720620850734],"y":[0.870930358348696],"text":"HRT.VENT.L","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(97,156,255,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(97,156,255,1)"}},"hoveron":"points","name":"HRT.VENT.L","legendgroup":"HRT.VENT.L","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.053951127197944],"y":[1.11968469182405],"text":"HRT.VNT.R","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(145,145,255,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(145,145,255,1)"}},"hoveron":"points","name":"HRT.VNT.R","legendgroup":"HRT.VNT.R","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.136368603048947],"y":[0.357553719743082],"text":"LIV.ADLT","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(179,133,255,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(179,133,255,1)"}},"hoveron":"points","name":"LIV.ADLT","legendgroup":"LIV.ADLT","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.0707286689083505],"y":[1.23157152552842],"text":"LNG","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(205,121,255,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(205,121,255,1)"}},"hoveron":"points","name":"LNG","legendgroup":"LNG","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.169592869496849],"y":[0.290479813330673],"text":"MUS.PSOAS","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(225,111,248,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(225,111,248,1)"}},"hoveron":"points","name":"MUS.PSOAS","legendgroup":"MUS.PSOAS","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.110774205593195],"y":[0.778006461423508],"text":"OVRY","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(239,103,235,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(239,103,235,1)"}},"hoveron":"points","name":"OVRY","legendgroup":"OVRY","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.18550429235565],"y":[0.757320096546672],"text":"PANC","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(249,98,219,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(249,98,219,1)"}},"hoveron":"points","name":"PANC","legendgroup":"PANC","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.0927282912597219],"y":[0.33665982345442],"text":"SKIN.PEN.FRSK.KER.03","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(255,97,202,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(255,97,202,1)"}},"hoveron":"points","name":"SKIN.PEN.FRSK.KER.03","legendgroup":"SKIN.PEN.FRSK.KER.03","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.0278424927774741],"y":[1.92847778688235],"text":"SPLN","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(255,99,182,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(255,99,182,1)"}},"hoveron":"points","name":"SPLN","legendgroup":"SPLN","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.0475566875160588],"y":[1.10917342142547],"text":"THYM","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(255,104,160,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(255,104,160,1)"}},"hoveron":"points","name":"THYM","legendgroup":"THYM","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.0552493038253077],"y":[1.08795878946073],"text":"VAS.AOR","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(253,111,136,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(253,111,136,1)"}},"hoveron":"points","name":"VAS.AOR","legendgroup":"VAS.AOR","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.5,0.5],"y":[1.85,1.65],"text":["slope: -2.71","R²: 0.56"],"hovertext":["",""],"textfont":{"size":14.6645669291339,"color":"rgba(0,0,0,1)"},"type":"scatter","mode":"text","hoveron":"points","showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":40.8401826484018,"r":7.30593607305936,"b":37.2602739726027,"l":48.9497716894977},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":"LYL1 (ENSG00000104903)","titlefont":{"color":"rgba(0,0,0,1)","family":"","size":17.5342465753425},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.0256123817184073,0.607392080985569],"tickmode":"array","ticktext":["0.0","0.2","0.4","0.6"],"tickvals":[-3.46944695195361e-18,0.2,0.4,0.6],"categoryorder":"array","categoryarray":["0.0","0.2","0.4","0.6"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"mean mCpG/CpG ratio at TSS +/-500bp","titlefont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.507141076026681,2.06517500059102],"tickmode":"array","ticktext":["-0.5","0.0","0.5","1.0","1.5","2.0"],"tickvals":[-0.5,0,0.5,1,1.5,2],"categoryorder":"array","categoryarray":["-0.5","0.0","0.5","1.0","1.5","2.0"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"log10(FPKM+1)","titlefont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(51,51,51,1)","width":0.66417600664176,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"source":"A","attrs":{"43392d10ade8":{"x":{},"y":{},"type":"scatter"},"433946dbe100":{"text":{},"colour":{},"x":{},"y":{}},"4339301bba2e":{"x":{},"y":{}}},"cur_data":"43392d10ade8","visdat":{"43392d10ade8":["function (y) ","x"],"433946dbe100":["function (y) ","x"],"4339301bba2e":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":[]}</script>
+]
+
+---
+class: font180
+
+# Repressing and activating marks
+
+.pull-left[
+### mCpG ratio
+![:img_scale 80%](img/all_genes_wgbs.png)
+]
+
+--
+
+.pull-right[
+### H3K4me3
+![:img_scale 80%](img/all_genes_h3k4.png)
+]
+
+---
+
+# Summary of results
+
+.pull-left[
+&lt;table class="table table-striped" style="font-size: 14px; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; mark &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; cell type by cell type &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; gene by gene &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; center on TSS &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: ivory;"&gt;WGBS&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: firebrick;"&gt;negative&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: firebrick;"&gt;negative&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: ivory;"&gt;DNAse&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: ivory;"&gt;H2A.Z&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: firebrick;"&gt;balanced&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: paleturquoise;"&gt;H3K4me1&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: paleturquoise;"&gt;H3K4me2&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: paleturquoise;"&gt;H3K4me3&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: paleturquoise;"&gt;H3K9me3&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: firebrick;"&gt;unclear&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: firebrick;"&gt;unclear&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; no &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: paleturquoise;"&gt;H3K23me2&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: grey;"&gt;NA&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: paleturquoise;"&gt;H3K27me3&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: firebrick;"&gt;negative – variable&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: firebrick;"&gt;negative&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: paleturquoise;"&gt;H3K36me3&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; no &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: paleturquoise;"&gt;H3K79me1&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; no &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: paleturquoise;"&gt;H3K79me2&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: firebrick;"&gt;balanced&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; no &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+.pull-right[
+&lt;table class="table table-striped" style="font-size: 14px; width: auto !important; margin-left: auto; margin-right: auto;"&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; mark &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; cell type by cell type &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; gene by gene &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; center on TSS &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: lightblue;"&gt;H2AK5ac&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: lightblue;"&gt;H2BK120ac&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: lightblue;"&gt;H2BK12ac&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: lightblue;"&gt;H2BK15ac&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: firebrick;"&gt;balanced&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: lightblue;"&gt;H2BK20ac&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: firebrick;"&gt;neutral&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: grey;"&gt;NA&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: lightblue;"&gt;H2BK5ac&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: lightblue;"&gt;H3K4ac&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: lightblue;"&gt;H3K9ac&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: lightblue;"&gt;H3K14ac&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: lightblue;"&gt;H3K18ac&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: lightblue;"&gt;H3K23ac&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: lightblue;"&gt;H3K27ac&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: lightblue;"&gt;H3K56ac&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: grey;"&gt;NA&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: lightblue;"&gt;H4K8ac&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: lightblue;"&gt;H4K12ac&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: grey;"&gt;NA&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: lightblue;"&gt;H4K91ac&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; &lt;span style="     color: darkgreen;"&gt;positive&lt;/span&gt; &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+]
+
+---
+class: font180
+
+# Lots of results
+
+Combinatorial explosion: &gt; 9000 plots!
+
+.center[
+![:img_scale 75%](img/explosion.png)
+]
+
+---
+class: font160
+
+# PEREpigenomics
+
+*P*rofile *E*xplorer of *R*oadmap *Epigenomic* data  
+[www.perepigenomics.roslin.ed.ac.uk](http://www.perepigenomics.roslin.ed.ac.uk/)
+
+.center[
+![:img_scale 50%](img/perepigenomics.png)
+]
+
+---
+class: font180
+
+# Perspective
+
+- More features (mono-, bi-, tri- exonic genes, gene families, etc.)
+- More marks
+- Causality analysis using perturbation experiments
+- FAANG data
+
+---
+class: font180
+
+# Thanks
+
+.pull-left[
+Anagha Joshi
+
+Anna Mantsoki
+
+Deepti Vipin
+]
+
+.pull-right[
+![:img_scale 35%](img/logo.png)
+![:img_scale 55%](img/GenPhySE-INRA.png)
+]
+    </textarea>
+<script src="libs/remark-latest.min.js"></script>
+<script src="libs/devailly.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"slideNumberFormat": ".%current%",
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
