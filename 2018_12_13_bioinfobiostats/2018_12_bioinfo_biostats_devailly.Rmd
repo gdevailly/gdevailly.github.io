@@ -355,6 +355,19 @@ class: font180
 ---
 class: font180
 
+# R user group Toulouse
+
+.center[
+![](img/logo.svg)
+]
+
+* website: [r-toulouse.netlify.com](https://r-toulouse.netlify.com/)
+* twitter: [https://twitter.com/RUG_Toulouse](@RUG_Toulouse)
+* mailing list: [groups.google.com/forum/#!forum/r-toulouse](https://groups.google.com/forum/#!forum/r-toulouse)
+
+---
+class: font180
+
 # Thanks
 
 .pull-left[
