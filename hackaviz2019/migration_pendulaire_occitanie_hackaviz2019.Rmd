@@ -28,13 +28,13 @@ tandis que les villes périphériques se vident le jour.
 Pour mieux comprendre la migration pendulaire en occitanie, en identifiant les grands axes de déplacement,
 représentons chaquns des trajets impliquants chaque jours plus de 100 personnes.
 
-# carte de yann
+![](lumieresDansLaNuit.gif)
 
 Et pour y voir plus claire, représentons les principaux déplacements 
-(trajets concernants plus de 1000 personnes par jour) sous forme d'un résaux:
+(trajets concernants plus de 600 personnes par jour) sous forme d'un résaux:
 
 
-```{r network, fig.width=10}
+```{r network, fig.width=9.48, echo=FALSE}
 library(visNetwork)
 load("network_data.RData")
 ledges <- data.frame(
@@ -52,11 +52,17 @@ lnodes <- data.frame(
 )
 visNetwork(
     vnodes, vedges,
-    main = "Principaux flux pendulaires en Occitanie"
-) # %>%
-  #  visLegend(addEdges = ledges, addNodes = lnodes, useGroups = FALSE)
+    main = list(
+        text = "Principaux flux pendulaires en Occitanie",
+        style = 'font-family:Arial;font-size:20px;text-align:center;'
+        ),
+    background = "#f2f2f2"
+) %>%
+    visPhysics(
+        barnesHut = list(gravitationalConstant = -1500)
+    )
 ```
-
+![](network_legend.png)
 
 # graphs emilie
 
