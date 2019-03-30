@@ -3,6 +3,7 @@ library(sf)
 library(tidyverse)
 library(gganimate)
 library(geojsonsf)
+library(ggrepel)
 
 sf <- geojsonsf::geojson_sf("par_commune.geojson")
 
@@ -35,44 +36,71 @@ dep_occ <- sf %>%
 # plot(dep_occ) 
 
 # static --------------
-ggplot() +
-    geom_sf(data = dep_occ, fill = "white") +
-    geom_sf(data = filter(sf, !is.na(intra - extra)), mapping = aes(fill = intra - extra), colour = "grey") +
-    # scale_fill_distiller(
-    #     palette = "PuOr", direction = +1,
-    #     breaks = seq(-10000, +10000, by = 5000),
-    #     limits = c(-10000, +10000),
-    #     oob = scales::squish
-    # ) +
-    scale_fill_gradient2(
-        low = "#e66101", mid = "white", high = "#5e3c99",
-        breaks = seq(-5000, +5000, by = 5000),
-        limits = c(-5000, +5000),
+par_commune <- read_csv("par_commune.csv")
+prefectures <- filter(
+    par_commune,
+    commune %in% c("TOULOUSE", "MONTPELLIER", "TARBES", "AUCH", "MONTAUBAN", "CAHORS", "RODEZ", "ALBI",
+                   "MENDE", "NIMES", "CARCASSONNE", "FOIX", "PERPIGNAN")
+)
+
+ggplot(data = filter(sf, !is.na(intra - extra)), mapping = aes(fill = intra - extra)) +
+    geom_sf(colour = "grey") +
+    geom_sf(data = dep_occ, fill = NA) +
+    annotate(
+         "text",
+         x = prefectures$latitude, y = prefectures$longitude + 0.1, label = str_to_title(prefectures$commune),
+         colour = "darkolivegreen", size = 3
+    ) +
+    annotate(
+        "segment",
+        x = prefectures$latitude, xend = prefectures$latitude,
+        y = prefectures$longitude + 0.05, yend = prefectures$longitude,
+        colour = "darkolivegreen"
+    ) +
+    scale_fill_gradientn(
+        colours = c("blue","white", "red", "black"), 
+        breaks = seq(-5000, +10000, by = 5000),
+        limits = c(-5000, +10000),
         oob = scales::squish
     ) +
-    theme_void() + coord_sf(datum = NA) +
-    labs(fill = "Personnes", title = "Gains pendulaires de populations en Occitanie")
+    theme_minimal(base_size = 14) + coord_sf(datum = NA) +
+    labs(fill = "Changements\nde population", title = "Gains pendulaires de populations en Occitanie", x = NULL, y = NULL) +
+    theme(legend.position = c(0.85, 0.2))
+
 
 # gif ----------
 compdat <- filter(sf, !is.na(intra - extra))
 compdat2 <- compdat
 compdat2$intra <- 0
 compdat2$extra <- 0
-compdat$anim <- 1 
-compdat2$anim <- 0
+compdat$anim <- "Jour"
+compdat2$anim <- "Nuit"
 anim_dat <- rbind(compdat, compdat2)
 
 an <- ggplot(data = anim_dat, mapping = aes(fill = intra - extra)) +
-    geom_sf(data = dep_occ, fill = "white") +
     geom_sf(colour = "grey") +
-    scale_fill_gradient2(
-        low = "#e66101", mid = "white", high = "#5e3c99",
-        breaks = seq(-5000, +5000, by = 5000),
-        limits = c(-5000, +5000),
+    geom_sf(data = dep_occ, fill = NA, colour = "darkgrey") +
+    annotate(
+        "text",
+        x = prefectures$latitude, y = prefectures$longitude + 0.1, label = str_to_title(prefectures$commune),
+        colour = "black", size = 5
+    ) +
+    annotate(
+        "segment",
+        x = prefectures$latitude, xend = prefectures$latitude,
+        y = prefectures$longitude + 0.05, yend = prefectures$longitude,
+        colour = "black"
+    ) +
+    scale_fill_gradientn(
+        colours = c("blue","white", "red", "darkred"), 
+        breaks = seq(-5000, +10000, by = 5000),
+        limits = c(-5000, +10000),
         oob = scales::squish
     ) +
-    theme_void() + coord_sf(datum = NA) +
-    labs(fill = "Personnes", title = "Gains pendulaires de populations en Occitanie") +
+    theme_minimal(base_size = 18) + coord_sf(datum = NA) +
+    labs(fill = "Changement de population:", title = "Gains pendulaires de population en Occitanie", x = NULL, y = NULL,
+         subtitle = "{closest_state}") +
+    theme(legend.position = c(0.88, 0.16)) +
     transition_states(anim, state_length = 1.5)
 
 anim_save(
@@ -80,7 +108,7 @@ anim_save(
     animate(
         an,
         nframes = 20, fps = 10,
-        width = 800, height = 500
+        width = 840, height = 600
     )
 )
 

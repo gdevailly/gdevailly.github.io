@@ -6,6 +6,7 @@ output:
     html_document:
         theme: cosmo
         code_folding: hide
+        self_contain: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -63,6 +64,8 @@ visNetwork(
     )
 ```
 ![](network_legend.png)
+
+*Le réseau peut mettre quelques secondes à s'afficher. Vous pouvez zoomer ou déplacer les points à l'aide de la souris.*
 
 # graphs emilie
 
