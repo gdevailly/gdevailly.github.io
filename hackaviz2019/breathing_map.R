@@ -7,9 +7,6 @@ library(ggrepel)
 
 sf <- geojsonsf::geojson_sf("par_commune.geojson")
 
-# ggplot(sf, aes(fill = departement)) +
-#     geom_sf()
-
 trajets <- read_csv("par_trajet.csv")
 trajets <- distinct(trajets)
 
@@ -67,7 +64,6 @@ ggplot(data = filter(sf, !is.na(intra - extra)), mapping = aes(fill = intra - ex
     labs(fill = "Changements\nde population", title = "Gains pendulaires de populations en Occitanie", x = NULL, y = NULL) +
     theme(legend.position = c(0.85, 0.2))
 
-
 # gif ----------
 compdat <- filter(sf, !is.na(intra - extra))
 compdat2 <- compdat
@@ -111,26 +107,3 @@ anim_save(
         width = 840, height = 600
     )
 )
-
-# 
-library(cartogram)
-require("lwgeom")
-morphdat <- mutate(compdat, net = intra - extra + 500) %>%
-    cartogram_cont("net", itermax = 5)
-
-dep_occ$test <- runif(13)
-cartogram_cont(dep_occ, "n_communes")
-cartogram_ncont(dep_occ, "test")
-
-
-p <- st_cast(dep_occ,  'MULTIPOLYGON')
-p <- cartogram_cont(p, "n_communes")
-   
-tm_shape(p) + tm_polygons("test", style = "jenks", legend.show = FALSE) +
-    tm_layout(frame = FALSE)
-
-tm_shape(dep_occ) + tm_polygons("test", style = "jenks", legend.show = FALSE) +
-    tm_layout(frame = FALSE)
-
-nc_sp <- sf:::as_Spatial(dep_occ) 
-p <- cartogram_cont(nc_sp, "n_communes")
