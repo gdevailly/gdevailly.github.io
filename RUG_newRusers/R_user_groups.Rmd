@@ -1,0 +1,141 @@
+---
+title: "R User Groups"
+subtitle: "and Where to Find Them"
+author: "Guillaume Devailly"
+institute: "INRA"
+date: "2019-07-08"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: [default, metropolis, metropolis-fonts, "libs/rtoulouse_metropolis.css"]
+    seal: false
+    nature:
+      beforeInit: "libs/devailly.js"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+---
+
+class: inverse, bottom, font180
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+
+library(knitr)
+opts_chunk$set(cache = FALSE, cache.lazy = FALSE, collapse = TRUE, fig.align = "center", echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+# R User Groups
+## and Where to Find Them
+<html>
+  <div style='float:left'></div>
+  <hr color='#80FFE6' size=1px width=100%>
+</html>
+.pull-left[
+
+`r icon::fa("twitter")` [@G_Devailly](https://twitter.com/G_Devailly)  
+Guillaume Devailly  
+useR!2019  
+2019/07/08
+]
+.pull-right[
+
+![:img_scale 80%](img/genphyse_inra_logo.png)
+]
+
+---
+layout: true
+class: font180
+
+---
+
+# R user groups
+*aka RUG*
+
+- local R events, organised by local user for local user (might be in the local language)
+
+- usually free & open to all (might require registration): students, professional, hobbyist, all levels of expeRtise.
+
+- presentations, long and short, tutorials, workshops, hackathons, meetings
+
+
+---
+
+# My experience with RUGs
+
+![](img/edinbr.png)
+- 2 years as attendee at [edinbR](http://edinbr.org/)
+
+![](img/logo.svg)
+- 1 year as organiser at [R-toulouse](https://r-toulouse.netlify.com/)
+
+---
+# Topics covered in the last year at R-Toulouse
+.pull-left[
+- Introduction to ggplot2
+- Symbolic differentiation with Deriv
+- The plotluck package
+- C'est l'enfeR: traps of the R language
+- Introduction to the tidyverse
+- The Metacoder package
+- base, data.table and dplyr benchmark
+- Bayesian statistics with Rjags
+- Introduction to shiny
+- GADMtools package
+]
+.pull-right[
+![](img/examples.png)
+]
+---
+
+# Is there an R user group in my city?
+
+[jumpingrivers.github.io/meetingsR/r-user-groups.html](https://jumpingrivers.github.io/meetingsR/r-user-groups.html)
+
+![:img_scale 70%](img/rugList.png)
+
+--
+
+(see also R Ladies [here](jumpingrivers.github.io/meetingsR/r-user-groups.html) or [here](https://rladies.org/))
+
+---
+
+# Is there an R user group in my city?
+
+- search on [twitter](https://twitter.com/search?q=R%20user%20group&src=typed_query&f=user)
+- search on [meetup.com](https://www.meetup.com/find/?allMeetups=false&keywords=R+user+group&radius=Infinity)
+- ask arround
+
+---
+
+# How to start an R user group?
+
+[blog.revolutionanalytics.com/tips-on-starting-an-r-user-group.html](https://blog.revolutionanalytics.com/tips-on-starting-an-r-user-group.html)
+
+![:img_scale 40%](img/tips.png)
+
+---
+
+# How to start an R user group?
+
+- organiser**s**
+- a room (universities usually happy to host such events for free)
+- a website
+- a mailing list
+- social media account(s)
+- one or two speakers
+- a code of conduct
+
+---
+
+# R User Group Support Program
+
+[www.r-consortium.org/projects/r-user-group-support-program](https://www.r-consortium.org/projects/r-user-group-support-program)
+
+A meetup.com Pro account + 
+- **Vector level:** $150, at least 5 people
+- **Matrix level:** $320, at least 50 people attending at least 3 meetings in the last 6 months
+- **Array level:** $820, at least 100 people attending at least 3 meetings in the last 6 months
+
++ adhesion to the R consortium [code of conduct](https://wiki.r-consortium.org/view/R_Consortium_and_the_R_Community_Code_of_Conduct)
