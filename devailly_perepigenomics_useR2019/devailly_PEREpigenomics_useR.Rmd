@@ -122,25 +122,13 @@ Machine learning:
 
 ---
 
-# Checking data quality before feeding it to ML
-
-.center[
-
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Machine learning : garbage in, garbage out, too. Great demo, though <a href="https://t.co/uTKWWEecLh">https://t.co/uTKWWEecLh</a> <a href="https://t.co/LEWDdR3ZJ1">pic.twitter.com/LEWDdR3ZJ1</a></p>&mdash; Martin Kirchgessner (@martin_kirch) <a href="https://twitter.com/martin_kirch/status/834748848119627777?ref_src=twsrc%5Etfw">February 23, 2017</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
-
-Visualisations & simple regressions might be more informative (as a first step).
-
-]
-
----
-
 # Objectives
 
 .pull-left[
 - Visualisation of marks, sorted by **gene** transcription level:
   - at TSS (gene start)
   - at TTS (gene end)
-- Visualisation of marks at **middle exon start**, sorted by:
+- Visualisation of marks at **middle exons** starts, sorted by:
   - transcription level
   - inclusion ratio
 - For **all** genes/exons in **each** cell type.
