@@ -9,6 +9,7 @@ output:
     lib_dir: libs
     css: [default, metropolis, metropolis-fonts, "libs/rtoulouse_metropolis.css"]
     seal: false
+    chakra: libs/remark-latest.min.js
     nature:
       beforeInit: "libs/devailly.js"
       highlightStyle: github
