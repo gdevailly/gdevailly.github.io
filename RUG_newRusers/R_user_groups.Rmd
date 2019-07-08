@@ -95,7 +95,7 @@ class: font180
 
 # Is there an R user group in my city?
 
-- see also R Ladies [here](https://jumpingrivers.github.io/meetingsR/r-user-groups.html) or [here](https://rladies.org/)
+- see also R Ladies [here](https://jumpingrivers.github.io/meetingsR/r-ladies-groups.html) or [here](https://rladies.org/)
 - R studio community [event page](https://community.rstudio.com/c/irl)
 - search on [twitter](https://twitter.com/search?q=R%20user%20group&src=typed_query&f=user)
 - search on [meetup.com](https://www.meetup.com/find/?allMeetups=false&keywords=R+user+group&radius=Infinity)
