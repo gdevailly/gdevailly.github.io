@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Petite introduction au package purrr</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Guillaume Devailly" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <script src="libs/htmlwidgets/htmlwidgets.js"></script>
+    <script src="libs/plotly-binding/plotly.js"></script>
+    <script src="libs/typedarray/typedarray.min.js"></script>
+    <script src="libs/jquery/jquery.min.js"></script>
+    <link href="libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
+    <script src="libs/crosstalk/js/crosstalk.min.js"></script>
+    <link href="libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+    <script src="libs/plotly-main/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="libs/uo.css" type="text/css" />
+    <link rel="stylesheet" href="libs/uo-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Petite introduction au package purrr
+### Guillaume Devailly
+### INRA
+### 2018/09/17
+
+---
+
+
+
+
+
+```r
+library(purrr)    # the package I'm going to present
+library(jsonlite) # importing JSON data as R list
+library(dplyr)    # imported for tiblle, pipe, etc.
+```
+
+---
+class: center
+
+# Je veux en savoir plus sur Pikachu
+
+![:img_scale 80%](img/PokéAPI.png)
+
+---
+
+# Je veux en savoir plus sur Pikachu
+
+
+```r
+pikachu &lt;- jsonlite::fromJSON(
+    "https://pokeapi.co/api/v2/pokemon/pikachu"      
+)
+str(pikachu, max.level = 1)
+## List of 17
+##  $ abilities               :'data.frame':	2 obs. of  3 variables:
+##  $ base_experience         : int 112
+##  $ forms                   :'data.frame':	1 obs. of  2 variables:
+##  $ game_indices            :'data.frame':	20 obs. of  2 variables:
+##  $ height                  : int 4
+##  $ held_items              :'data.frame':	2 obs. of  2 variables:
+##  $ id                      : int 25
+##  $ is_default              : logi TRUE
+##  $ location_area_encounters: chr "https://pokeapi.co/api/v2/pokemon/25/encounters"
+##  $ moves                   :'data.frame':	81 obs. of  2 variables:
+##  $ name                    : chr "pikachu"
+##  $ order                   : int 35
+##  $ species                 :List of 2
+##  $ sprites                 :List of 8
+##  $ stats                   :'data.frame':	6 obs. of  3 variables:
+##  $ types                   :'data.frame':	1 obs. of  2 variables:
+##  $ weight                  : int 60
+```
+
+---
+
+# Quel est l'Indice de Masse Corporelle de Pikachu ?
+### (IMC, ou BMI en anglais)
+
+
+```r
+with(pikachu, tibble(
+    name = "Pikachu",
+    weight = weight/10, # API in hectograls, we want kilograms
+    height = height/10, # API in decimeters, we want meters
+    BMI = weight / (height^2),
+    type = paste(types$type$name, collapse = ", ") # Pokemons can have several types, collapsing
+))
+## # A tibble: 1 x 5
+##   name    weight height   BMI type    
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   
+## 1 Pikachu      6    0.4  37.5 electric
+```
+
+---
+
+# Mais si je m'interesse aussi à Bulbizarre, Salamèche et Carapuce ?
+
+---
+Solution 1 : copier, coller, modifier
+
+
+```r
+bulbasaur &lt;- jsonlite::fromJSON(
+    "https://pokeapi.co/api/v2/pokemon/bulbasaur"    
+)
+with(bulbasaur, tibble(
+    name = "bulbasaur",
+    weight = weight/10, 
+    height = height/10,
+    BMI = weight / (height^2),
+    type = paste(types$type$name, collapse = ", ") 
+))
+## # A tibble: 1 x 5
+##   name      weight height   BMI type         
+##   &lt;chr&gt;      &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
+## 1 bulbasaur    6.9    0.7  14.1 poison, grass
+
+charmander &lt;- jsonlite::fromJSON(
+    "https://pokeapi.co/api/v2/pokemon/charmander"      
+)
+with(charmander, tibble(
+    name = "charmander",
+    weight = weight/10,
+    height = height/10, 
+    BMI = weight / (height^2),
+    type = paste(types$type$name, collapse = ", ")
+))
+## # A tibble: 1 x 5
+##   name       weight height   BMI type 
+##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;
+## 1 charmander    8.5    0.6  23.6 fire
+
+squirtle &lt;- jsonlite::fromJSON(
+    "https://pokeapi.co/api/v2/pokemon/squirtle"      
+)
+with(squirtle, tibble(
+    name = "squirtle",
+    weight = weight/10,
+    height = height/10, 
+    BMI = weight / (height^2),
+    type = paste(types$type$name, collapse = ", ")
+))
+## # A tibble: 1 x 5
+##   name     weight height   BMI type 
+##   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;
+## 1 squirtle      9    0.5    36 water
+```
+
+---
+Solution 1 : copier, coller, **modifier**
+
+
+```r
+*bulbasaur &lt;- jsonlite::fromJSON(
+*   "https://pokeapi.co/api/v2/pokemon/bulbasaur"
+)
+*with(bulbasaur, tibble(
+*   name = "bulbasaur",
+    weight = weight/10, 
+    height = height/10, 
+    BMI = weight / (height^2),
+    type = paste(types$type$name, collapse = ", ") 
+))
+## # A tibble: 1 x 5
+##   name      weight height   BMI type         
+##   &lt;chr&gt;      &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
+## 1 bulbasaur    6.9    0.7  14.1 poison, grass
+
+*charmander &lt;- jsonlite::fromJSON(
+*   "https://pokeapi.co/api/v2/pokemon/charmander"
+)
+*with(charmander, tibble(
+*   name = "charmander",
+    weight = weight/10, 
+    height = height/10, 
+    BMI = weight / (height^2),
+    type = paste(types$type$name, collapse = ", ") 
+))
+## # A tibble: 1 x 5
+##   name       weight height   BMI type 
+##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;
+## 1 charmander    8.5    0.6  23.6 fire
+
+*squirtle &lt;- jsonlite::fromJSON(
+*   "https://pokeapi.co/api/v2/pokemon/squirtle"
+)
+*with(squirtle, tibble(
+*   name = "squirtle",
+    weight = weight/10,
+    height = height/10, 
+    BMI = weight / (height^2),
+    type = paste(types$type$name, collapse = ", ")
+))
+## # A tibble: 1 x 5
+##   name     weight height   BMI type 
+##   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;
+## 1 squirtle      9    0.5    36 water
+```
+
+---
+
+* laborieux
+* source d'erreure
+* répercuter tout changement dans chaque copier - coller
+
+Mais les IDE peuvent aider :
+* Rechercher et Remplacer
+* curseurs multiples (alt + click sour RStudio)
+
+---
+Solution 2: une boucle `for`
+
+
+```r
+my_pokemons &lt;- c("pikachu", "bulbasaur", "charmander", "squirtle")
+
+pokemon_bmi &lt;- tibble( # pré-allocation
+    name = character(0),
+    weight = double(0),
+    height = double(0),
+    bmi = double(0),
+    type = character(0)
+)
+
+for (i in seq_along(my_pokemons)) {
+    poke_i &lt;-  jsonlite::fromJSON(
+        paste0("https://pokeapi.co/api/v2/pokemon/", my_pokemons[i])
+    ) 
+    pokemon_bmi[i, ] &lt;- with(poke_i, tibble( 
+        name =  my_pokemons[i],
+        weight = weight/10,
+        height = height/10, 
+        BMI = weight / (height^2),
+        type = paste(types$type$name, collapse = ", ")
+    ))
+}
+```
+
+---
+
+
+```r
+pokemon_bmi
+## # A tibble: 4 x 5
+##   name       weight height   bmi type         
+## * &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
+## 1 pikachu       6      0.4  37.5 electric     
+## 2 bulbasaur     6.9    0.7  14.1 poison, grass
+## 3 charmander    8.5    0.6  23.6 fire         
+## 4 squirtle      9      0.5  36   water
+```
+
+* fonctionne
+* rapide
+
+Mais :
+* verbeux
+* crée des variables dans l'environement global
+* peut être lent si l'objet grandit : `pokemon_bmi &lt;- rbind(pokemon_bmi, new_pokemon)`
+* besoin de réfléchir pour ne pas tomber dans ce genre de piège
+* non immédiatement parralisable
+
+---
+
+La solution idiomatique : `lapply()`
+
+Étape 1 : créer une fonction
+
+
+```r
+get_pokemon_bmi &lt;- function(poke_name, sleep = 0) {
+    my_pokemon &lt;-  jsonlite::fromJSON(
+        paste0("https://pokeapi.co/api/v2/pokemon/", poke_name)
+    ) 
+    Sys.sleep(sleep)
+    return(
+        with(my_pokemon, tibble( 
+            name = name,
+            weight = weight/10,
+            height = height/10, 
+            BMI = weight / (height^2),
+            type = paste(types$type$name, collapse = ", ")
+        ))
+    )
+}
+
+get_pokemon_bmi("pikachu")
+## # A tibble: 1 x 5
+##   name    weight height   BMI type    
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   
+## 1 pikachu      6    0.4  37.5 electric
+```
+
+---
+
+Étape 2 : appeler la fonction sur chaque élément d'un vecteur
+
+
+```r
+my_pokemons &lt;- c("pikachu", "bulbasaur", "charmander", "squirtle")
+
+pokemon_bmi &lt;- lapply(
+    my_pokemons, # for each element in my_pokemons
+    get_pokemon_bmi # run function get_pokemon_bmi 
+)
+
+str(pokemon_bmi) # a list :-(
+## List of 4
+##  $ :Classes 'tbl_df', 'tbl' and 'data.frame':	1 obs. of  5 variables:
+##   ..$ name  : chr "pikachu"
+##   ..$ weight: num 6
+##   ..$ height: num 0.4
+##   ..$ BMI   : num 37.5
+##   ..$ type  : chr "electric"
+##  $ :Classes 'tbl_df', 'tbl' and 'data.frame':	1 obs. of  5 variables:
+##   ..$ name  : chr "bulbasaur"
+##   ..$ weight: num 6.9
+##   ..$ height: num 0.7
+##   ..$ BMI   : num 14.1
+##   ..$ type  : chr "poison, grass"
+##  $ :Classes 'tbl_df', 'tbl' and 'data.frame':	1 obs. of  5 variables:
+##   ..$ name  : chr "charmander"
+##   ..$ weight: num 8.5
+##   ..$ height: num 0.6
+##   ..$ BMI   : num 23.6
+##   ..$ type  : chr "fire"
+##  $ :Classes 'tbl_df', 'tbl' and 'data.frame':	1 obs. of  5 variables:
+##   ..$ name  : chr "squirtle"
+##   ..$ weight: num 9
+##   ..$ height: num 0.5
+##   ..$ BMI   : num 36
+##   ..$ type  : chr "water"
+```
+
+---
+
+Étape 3 : transformer la liste en tableau
+
+```r
+pokemon_bmi &lt;- do.call(
+    rbind,
+    pokemon_bmi
+)
+
+pokemon_bmi
+## # A tibble: 4 x 5
+##   name       weight height   BMI type         
+##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
+## 1 pikachu       6      0.4  37.5 electric     
+## 2 bulbasaur     6.9    0.7  14.1 poison, grass
+## 3 charmander    8.5    0.6  23.6 fire         
+## 4 squirtle      9      0.5  36   water
+```
+
+---
+
+* en théorie, mois besoin de mettre les mains dans le camboui
+* en pratique, `x &lt;- do.call(rbind, x)` ...
+* facilement parallélisable&lt;sup&gt;1&lt;/sup&gt; :
+
+```r
+pokemon_bmi &lt;- parallel::mclapply(
+    my_pokemons,
+    get_pokemon_bmi,
+    mc.cores = 8
+)
+```
+
+[1] GNU/linux et macOS, sur windows, passer par des alternatives
+
+---
+
+Solution 4: le tidyverse
+
+Étape 1 : définir une fonction
+Étape 2 : itérer
+
+```r
+my_pokemons &lt;- c("pikachu", "bulbasaur", "charmander", "squirtle")
+
+pokemon_bmi &lt;- map_dfr( # le résultat est un _D_ata _F_rame aggloméré par _R_angs
+    my_pokemons,
+    get_pokemon_bmi
+)
+
+pokemon_bmi
+## # A tibble: 4 x 5
+##   name       weight height   BMI type         
+##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
+## 1 pikachu       6      0.4  37.5 electric     
+## 2 bulbasaur     6.9    0.7  14.1 poison, grass
+## 3 charmander    8.5    0.6  23.6 fire         
+## 4 squirtle      9      0.5  36   water
+```
+
+---
+
+* moins besoin de mettre lesmains dans le camboui
+* facilement parralelisable :
+
+```r
+library(furrr)
+plan(multiprocess(workers = 8))
+## Warning: [ONE-TIME WARNING] Forked processing ('multicore') is disabled
+## in future (&gt;= 1.13.0) when running R from RStudio, because it is
+## considered unstable. Because of this, plan("multicore") will fall
+## back to plan("sequential"), and plan("multiprocess") will fall back to
+## plan("multisession") - not plan("multicore") as in the past. For more
+## details, how to control forked processing or not, and how to silence this
+## warning in future R sessions, see ?future::supportsMulticore
+future_map_dfr(my_pokemons, get_pokemon_bmi)
+## # A tibble: 4 x 5
+##   name       weight height   BMI type         
+##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
+## 1 pikachu       6      0.4  37.5 electric     
+## 2 bulbasaur     6.9    0.7  14.1 poison, grass
+## 3 charmander    8.5    0.6  23.6 fire         
+## 4 squirtle      9      0.5  36   water
+```
+
+---
+
+Une fonction `map_*` par type de résultat souhaité :
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; function &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; result &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; map() &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; list &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; map_chr() &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; character vector &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; map_int() &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; integer vector &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; map_dbl() &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; double vector &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; map_lgl() &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; logical vector &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; map_dfr() &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; data frame, row bind &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; map_dfc() &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; data frame, col bind &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; walk() &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; no return (side effects) &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+---
+
+Fonctions annonyes:
+
+
+```r
+map_dbl(my_pokemons, function(x) {
+    get_pokemon_bmi(x)[["height"]]
+})
+## [1] 0.4 0.7 0.6 0.5
+
+map_dbl(my_pokemons, ~get_pokemon_bmi(.x)[["height"]])
+## [1] 0.4 0.7 0.6 0.5
+```
+
+---
+
+Préserve les noms :
+
+
+```r
+my_pokemons
+## [1] "pikachu"    "bulbasaur"  "charmander" "squirtle"
+
+set_names(my_pokemons)
+##      pikachu    bulbasaur   charmander     squirtle 
+##    "pikachu"  "bulbasaur" "charmander"   "squirtle"
+
+my_pokemons %&gt;%
+    map_chr(~get_pokemon_bmi(.x)[["type"]])
+## [1] "electric"      "poison, grass" "fire"          "water"
+
+set_names(my_pokemons) %&gt;%
+    map_chr(~get_pokemon_bmi(.x)[["type"]])
+##         pikachu       bulbasaur      charmander        squirtle 
+##      "electric" "poison, grass"          "fire"         "water"
+```
+
+---
+Rattrapage d'erreur:
+
+
+```r
+my_pokemons &lt;- c("pikachu", "bulbasaur", "charmander", "squirtle", "magicarpe")
+map(my_pokemons, get_pokemon_bmi)
+## Error in open.connection(con, "rb"): HTTP error 404.
+```
+
+**Tout** le calcul est perdu à cause d'une erreure sur **une seule** ittération 
+(T__T)
+
+---
+
+
+```r
+safe_get_pokemon_bmi &lt;- safely(get_pokemon_bmi)
+
+safe_get_pokemon_bmi("pikachu")
+## $result
+## # A tibble: 1 x 5
+##   name    weight height   BMI type    
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   
+## 1 pikachu      6    0.4  37.5 electric
+## 
+## $error
+## NULL
+
+safe_get_pokemon_bmi("magicarpe")
+## $result
+## NULL
+## 
+## $error
+## &lt;simpleError in open.connection(con, "rb"): HTTP error 404.&gt;
+```
+
+---
+
+
+```r
+prelim_results &lt;- set_names(my_pokemons) %&gt;%
+    map(safe_get_pokemon_bmi)
+
+success &lt;- map_lgl(prelim_results, ~is.null(.x$error))
+success
+##    pikachu  bulbasaur charmander   squirtle  magicarpe 
+##       TRUE       TRUE       TRUE       TRUE      FALSE
+
+map_dfr(prelim_results[success], "result")
+## # A tibble: 4 x 5
+##   name       weight height   BMI type         
+##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
+## 1 pikachu       6      0.4  37.5 electric     
+## 2 bulbasaur     6.9    0.7  14.1 poison, grass
+## 3 charmander    8.5    0.6  23.6 fire         
+## 4 squirtle      9      0.5  36   water
+```
+
+---
+
+Ou alors :
+
+```r
+possibly_get_pokemon_bmi &lt;- possibly(get_pokemon_bmi, otherwise = NULL)
+
+possibly_get_pokemon_bmi("pikachu")
+## # A tibble: 1 x 5
+##   name    weight height   BMI type    
+##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   
+## 1 pikachu      6    0.4  37.5 electric
+
+possibly_get_pokemon_bmi("magicarpe")
+## NULL
+
+my_pokemons
+## [1] "pikachu"    "bulbasaur"  "charmander" "squirtle"   "magicarpe"
+map_dfr(
+    my_pokemons,
+    ~possibly(get_pokemon_bmi, otherwise = NULL)(.x)
+)
+## # A tibble: 4 x 5
+##   name       weight height   BMI type         
+##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        
+## 1 pikachu       6      0.4  37.5 electric     
+## 2 bulbasaur     6.9    0.7  14.1 poison, grass
+## 3 charmander    8.5    0.6  23.6 fire         
+## 4 squirtle      9      0.5  36   water
+```
+
+---
+
+
+```r
+pokemon_bmi &lt;- map_dfr(1:151, possibly_get_pokemon_bmi, sleep = 1)
+
+library(ggplot2)
+library(plotly)
+p &lt;- ggplot(pokemon_bmi, aes(x = weight, y = height, color = type, text = name)) +
+    geom_point()
+ggplotly(p)
+
+```
+
+---
+
+
+```
+## Registered S3 methods overwritten by 'ggplot2':
+##   method         from 
+##   [.quosures     rlang
+##   c.quosures     rlang
+##   print.quosures rlang
+## 
+## Attaching package: 'plotly'
+## The following object is masked from 'package:ggplot2':
+## 
+##     last_plot
+## The following object is masked from 'package:stats':
+## 
+##     filter
+## The following object is masked from 'package:graphics':
+## 
+##     layout
+```
+
+<div id="htmlwidget-5113cb64e89ebc2a294e" style="width:504px;height:504px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5113cb64e89ebc2a294e">{"x":{"data":[{"x":[2.9,9.9,55],"y":[0.3,0.7,1.5],"text":["weight:   2.9<br />height: 0.3<br />type: bug<br />caterpie","weight:   9.9<br />height: 0.7<br />type: bug<br />metapod","weight:  55.0<br />height: 1.5<br />type: bug<br />pinsir"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(248,118,109,1)"}},"hoveron":"points","name":"bug","legendgroup":"bug","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[3.3,16.5],"y":[1.8,4],"text":["weight:   3.3<br />height: 1.8<br />type: dragon<br />dratini","weight:  16.5<br />height: 4.0<br />type: dragon<br />dragonair"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(241,125,82,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(241,125,82,1)"}},"hoveron":"points","name":"dragon","legendgroup":"dragon","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[6,30,10.4,66.6,30,24.5],"y":[0.4,0.8,0.5,1.2,1.1,0.8],"text":["weight:   6.0<br />height: 0.4<br />type: electric<br />pikachu","weight:  30.0<br />height: 0.8<br />type: electric<br />raichu","weight:  10.4<br />height: 0.5<br />type: electric<br />voltorb","weight:  66.6<br />height: 1.2<br />type: electric<br />electrode","weight:  30.0<br />height: 1.1<br />type: electric<br />electabuzz","weight:  24.5<br />height: 0.8<br />type: electric<br />jolteon"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(233,132,44,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(233,132,44,1)"}},"hoveron":"points","name":"electric","legendgroup":"electric","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[7.5,40],"y":[0.6,1.3],"text":["weight:   7.5<br />height: 0.6<br />type: fairy<br />clefairy","weight:  40.0<br />height: 1.3<br />type: fairy<br />clefable"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(224,139,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(224,139,0,1)"}},"hoveron":"points","name":"fairy","legendgroup":"fairy","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[5.5,12],"y":[0.5,1],"text":["weight:   5.5<br />height: 0.5<br />type: fairy, normal<br />jigglypuff","weight:  12.0<br />height: 1.0<br />type: fairy, normal<br />wigglytuff"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(214,145,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(214,145,0,1)"}},"hoveron":"points","name":"fairy, normal","legendgroup":"fairy, normal","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[54.5],"y":[1.3],"text":"weight:  54.5<br />height: 1.3<br />type: fairy, psychic<br />mr-mime","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(202,151,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(202,151,0,1)"}},"hoveron":"points","name":"fairy, psychic","legendgroup":"fairy, psychic","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[28,32,19.5,70.5,130,49.8,50.2],"y":[0.5,1,0.8,1.5,1.6,1.5,1.4],"text":["weight:  28.0<br />height: 0.5<br />type: fighting<br />mankey","weight:  32.0<br />height: 1.0<br />type: fighting<br />primeape","weight:  19.5<br />height: 0.8<br />type: fighting<br />machop","weight:  70.5<br />height: 1.5<br />type: fighting<br />machoke","weight: 130.0<br />height: 1.6<br />type: fighting<br />machamp","weight:  49.8<br />height: 1.5<br />type: fighting<br />hitmonlee","weight:  50.2<br />height: 1.4<br />type: fighting<br />hitmonchan"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(188,157,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(188,157,0,1)"}},"hoveron":"points","name":"fighting","legendgroup":"fighting","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[54],"y":[1.3],"text":"weight:  54.0<br />height: 1.3<br />type: fighting, water<br />poliwrath","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(173,162,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(173,162,0,1)"}},"hoveron":"points","name":"fighting, water","legendgroup":"fighting, water","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[8.5,19,9.9,19.9,19,155,30,95,44.5,25],"y":[0.6,1.1,0.6,1.1,0.7,1.9,1,1.7,1.3,0.9],"text":["weight:   8.5<br />height: 0.6<br />type: fire<br />charmander","weight:  19.0<br />height: 1.1<br />type: fire<br />charmeleon","weight:   9.9<br />height: 0.6<br />type: fire<br />vulpix","weight:  19.9<br />height: 1.1<br />type: fire<br />ninetales","weight:  19.0<br />height: 0.7<br />type: fire<br />growlithe","weight: 155.0<br />height: 1.9<br />type: fire<br />arcanine","weight:  30.0<br />height: 1.0<br />type: fire<br />ponyta","weight:  95.0<br />height: 1.7<br />type: fire<br />rapidash","weight:  44.5<br />height: 1.3<br />type: fire<br />magmar","weight:  25.0<br />height: 0.9<br />type: fire<br />flareon"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(156,167,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(156,167,0,1)"}},"hoveron":"points","name":"fire","legendgroup":"fire","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[32,56],"y":[1.1,1.5],"text":["weight:  32.0<br />height: 1.1<br />type: flying, bug<br />butterfree","weight:  56.0<br />height: 1.5<br />type: flying, bug<br />scyther"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(135,172,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(135,172,0,1)"}},"hoveron":"points","name":"flying, bug","legendgroup":"flying, bug","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[210],"y":[2.2],"text":"weight: 210.0<br />height: 2.2<br />type: flying, dragon<br />dragonite","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(111,176,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(111,176,0,1)"}},"hoveron":"points","name":"flying, dragon","legendgroup":"flying, dragon","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[52.6],"y":[1.6],"text":"weight:  52.6<br />height: 1.6<br />type: flying, electric<br />zapdos","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(77,180,0,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(77,180,0,1)"}},"hoveron":"points","name":"flying, electric","legendgroup":"flying, electric","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[90.5,60],"y":[1.7,2],"text":["weight:  90.5<br />height: 1.7<br />type: flying, fire<br />charizard","weight:  60.0<br />height: 2.0<br />type: flying, fire<br />moltres"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,184,19,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,184,19,1)"}},"hoveron":"points","name":"flying, fire","legendgroup":"flying, fire","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[55.4],"y":[1.7],"text":"weight:  55.4<br />height: 1.7<br />type: flying, ice<br />articuno","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,187,68,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,187,68,1)"}},"hoveron":"points","name":"flying, ice","legendgroup":"flying, ice","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1.8,30,39.5,2,38,15,39.2,85.2],"y":[0.3,1.1,1.5,0.3,1.2,0.8,1.4,1.8],"text":["weight:   1.8<br />height: 0.3<br />type: flying, normal<br />pidgey","weight:  30.0<br />height: 1.1<br />type: flying, normal<br />pidgeotto","weight:  39.5<br />height: 1.5<br />type: flying, normal<br />pidgeot","weight:   2.0<br />height: 0.3<br />type: flying, normal<br />spearow","weight:  38.0<br />height: 1.2<br />type: flying, normal<br />fearow","weight:  15.0<br />height: 0.8<br />type: flying, normal<br />farfetchd","weight:  39.2<br />height: 1.4<br />type: flying, normal<br />doduo","weight:  85.2<br />height: 1.8<br />type: flying, normal<br />dodrio"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,189,97,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,189,97,1)"}},"hoveron":"points","name":"flying, normal","legendgroup":"flying, normal","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[7.5,55],"y":[0.8,1.6],"text":["weight:   7.5<br />height: 0.8<br />type: flying, poison<br />zubat","weight:  55.0<br />height: 1.6<br />type: flying, poison<br />golbat"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,121,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,191,121,1)"}},"hoveron":"points","name":"flying, poison","legendgroup":"flying, poison","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[59],"y":[1.8],"text":"weight:  59.0<br />height: 1.8<br />type: flying, rock<br />aerodactyl","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,192,142,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,192,142,1)"}},"hoveron":"points","name":"flying, rock","legendgroup":"flying, rock","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[235],"y":[6.5],"text":"weight: 235.0<br />height: 6.5<br />type: flying, water<br />gyarados","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,193,162,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,193,162,1)"}},"hoveron":"points","name":"flying, water","legendgroup":"flying, water","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[35],"y":[1],"text":"weight:  35.0<br />height: 1.0<br />type: grass<br />tangela","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,192,180,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,192,180,1)"}},"hoveron":"points","name":"grass","legendgroup":"grass","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[5.4,29.5],"y":[0.3,1],"text":["weight:   5.4<br />height: 0.3<br />type: grass, bug<br />paras","weight:  29.5<br />height: 1.0<br />type: grass, bug<br />parasect"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,191,196,1)"}},"hoveron":"points","name":"grass, bug","legendgroup":"grass, bug","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[12,29.5,0.8,33.3,6.5,45],"y":[0.6,1,0.2,0.7,0.4,1],"text":["weight:  12.0<br />height: 0.6<br />type: ground<br />sandshrew","weight:  29.5<br />height: 1.0<br />type: ground<br />sandslash","weight:   0.8<br />height: 0.2<br />type: ground<br />diglett","weight:  33.3<br />height: 0.7<br />type: ground<br />dugtrio","weight:   6.5<br />height: 0.4<br />type: ground<br />cubone","weight:  45.0<br />height: 1.0<br />type: ground<br />marowak"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,189,212,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,189,212,1)"}},"hoveron":"points","name":"ground","legendgroup":"ground","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[60,62],"y":[1.3,1.4],"text":["weight:  60.0<br />height: 1.3<br />type: ground, poison<br />nidoqueen","weight:  62.0<br />height: 1.4<br />type: ground, poison<br />nidoking"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,185,226,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,185,226,1)"}},"hoveron":"points","name":"ground, poison","legendgroup":"ground, poison","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[20,105,300,210],"y":[0.4,1,1.4,8.8],"text":["weight:  20.0<br />height: 0.4<br />type: ground, rock<br />geodude","weight: 105.0<br />height: 1.0<br />type: ground, rock<br />graveler","weight: 300.0<br />height: 1.4<br />type: ground, rock<br />golem","weight: 210.0<br />height: 8.8<br />type: ground, rock<br />onix"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,181,238,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,181,238,1)"}},"hoveron":"points","name":"ground, rock","legendgroup":"ground, rock","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[120,132.5,220],"y":[1.7,1.5,2.5],"text":["weight: 120.0<br />height: 1.7<br />type: ice, water<br />dewgong","weight: 132.5<br />height: 1.5<br />type: ice, water<br />cloyster","weight: 220.0<br />height: 2.5<br />type: ice, water<br />lapras"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,175,248,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,175,248,1)"}},"hoveron":"points","name":"ice, water","legendgroup":"ice, water","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[3.5,18.5,4.2,32,65.5,34.6,80,88.4,4,6.5,36.5,460],"y":[0.3,0.7,0.4,1,1.2,1.1,2.2,1.4,0.3,0.3,0.8,2.1],"text":["weight:   3.5<br />height: 0.3<br />type: normal<br />rattata","weight:  18.5<br />height: 0.7<br />type: normal<br />raticate","weight:   4.2<br />height: 0.4<br />type: normal<br />meowth","weight:  32.0<br />height: 1.0<br />type: normal<br />persian","weight:  65.5<br />height: 1.2<br />type: normal<br />lickitung","weight:  34.6<br />height: 1.1<br />type: normal<br />chansey","weight:  80.0<br />height: 2.2<br />type: normal<br />kangaskhan","weight:  88.4<br />height: 1.4<br />type: normal<br />tauros","weight:   4.0<br />height: 0.3<br />type: normal<br />ditto","weight:   6.5<br />height: 0.3<br />type: normal<br />eevee","weight:  36.5<br />height: 0.8<br />type: normal<br />porygon","weight: 460.0<br />height: 2.1<br />type: normal<br />snorlax"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,167,255,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,167,255,1)"}},"hoveron":"points","name":"normal","legendgroup":"normal","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[6.9,65,7,20,9,19.5,30,30,1,9.5],"y":[2,3.5,0.4,0.8,0.5,0.9,0.9,1.2,0.6,1.2],"text":["weight:   6.9<br />height: 2.0<br />type: poison<br />ekans","weight:  65.0<br />height: 3.5<br />type: poison<br />arbok","weight:   7.0<br />height: 0.4<br />type: poison<br />nidoran-f","weight:  20.0<br />height: 0.8<br />type: poison<br />nidorina","weight:   9.0<br />height: 0.5<br />type: poison<br />nidoran-m","weight:  19.5<br />height: 0.9<br />type: poison<br />nidorino","weight:  30.0<br />height: 0.9<br />type: poison<br />grimer","weight:  30.0<br />height: 1.2<br />type: poison<br />muk","weight:   1.0<br />height: 0.6<br />type: poison<br />koffing","weight:   9.5<br />height: 1.2<br />type: poison<br />weezing"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(77,159,255,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(77,159,255,1)"}},"hoveron":"points","name":"poison","legendgroup":"poison","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[3.2,10,29.5,30,12.5],"y":[0.3,0.6,1,1,1.5],"text":["weight:   3.2<br />height: 0.3<br />type: poison, bug<br />weedle","weight:  10.0<br />height: 0.6<br />type: poison, bug<br />kakuna","weight:  29.5<br />height: 1.0<br />type: poison, bug<br />beedrill","weight:  30.0<br />height: 1.0<br />type: poison, bug<br />venonat","weight:  12.5<br />height: 1.5<br />type: poison, bug<br />venomoth"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(127,150,255,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(127,150,255,1)"}},"hoveron":"points","name":"poison, bug","legendgroup":"poison, bug","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[0.1,0.1,40.5],"y":[1.3,1.6,1.5],"text":["weight:   0.1<br />height: 1.3<br />type: poison, ghost<br />gastly","weight:   0.1<br />height: 1.6<br />type: poison, ghost<br />haunter","weight:  40.5<br />height: 1.5<br />type: poison, ghost<br />gengar"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(161,139,255,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(161,139,255,1)"}},"hoveron":"points","name":"poison, ghost","legendgroup":"poison, ghost","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[6.9,13,100,5.4,8.6,18.6,4,6.4,15.5],"y":[0.7,1,2,0.5,0.8,1.2,0.7,1,1.7],"text":["weight:   6.9<br />height: 0.7<br />type: poison, grass<br />bulbasaur","weight:  13.0<br />height: 1.0<br />type: poison, grass<br />ivysaur","weight: 100.0<br />height: 2.0<br />type: poison, grass<br />venusaur","weight:   5.4<br />height: 0.5<br />type: poison, grass<br />oddish","weight:   8.6<br />height: 0.8<br />type: poison, grass<br />gloom","weight:  18.6<br />height: 1.2<br />type: poison, grass<br />vileplume","weight:   4.0<br />height: 0.7<br />type: poison, grass<br />bellsprout","weight:   6.4<br />height: 1.0<br />type: poison, grass<br />weepinbell","weight:  15.5<br />height: 1.7<br />type: poison, grass<br />victreebel"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(188,129,255,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(188,129,255,1)"}},"hoveron":"points","name":"poison, grass","legendgroup":"poison, grass","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[45.5,55],"y":[0.9,1.6],"text":["weight:  45.5<br />height: 0.9<br />type: poison, water<br />tentacool","weight:  55.0<br />height: 1.6<br />type: poison, water<br />tentacruel"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(209,119,255,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(209,119,255,1)"}},"hoveron":"points","name":"poison, water","legendgroup":"poison, water","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[19.5,56.5,48,32.4,75.6,122,4],"y":[0.9,1.3,1.5,1,1.6,2,0.4],"text":["weight:  19.5<br />height: 0.9<br />type: psychic<br />abra","weight:  56.5<br />height: 1.3<br />type: psychic<br />kadabra","weight:  48.0<br />height: 1.5<br />type: psychic<br />alakazam","weight:  32.4<br />height: 1.0<br />type: psychic<br />drowzee","weight:  75.6<br />height: 1.6<br />type: psychic<br />hypno","weight: 122.0<br />height: 2.0<br />type: psychic<br />mewtwo","weight:   4.0<br />height: 0.4<br />type: psychic<br />mew"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(226,110,247,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(226,110,247,1)"}},"hoveron":"points","name":"psychic","legendgroup":"psychic","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2.5,120],"y":[0.4,2],"text":["weight:   2.5<br />height: 0.4<br />type: psychic, grass<br />exeggcute","weight: 120.0<br />height: 2.0<br />type: psychic, grass<br />exeggutor"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(238,103,236,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(238,103,236,1)"}},"hoveron":"points","name":"psychic, grass","legendgroup":"psychic, grass","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[40.6],"y":[1.4],"text":"weight:  40.6<br />height: 1.4<br />type: psychic, ice<br />jynx","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,99,223,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(248,99,223,1)"}},"hoveron":"points","name":"psychic, ice","legendgroup":"psychic, ice","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[36,78.5,80],"y":[1.2,1.6,1.1],"text":["weight:  36.0<br />height: 1.2<br />type: psychic, water<br />slowpoke","weight:  78.5<br />height: 1.6<br />type: psychic, water<br />slowbro","weight:  80.0<br />height: 1.1<br />type: psychic, water<br />starmie"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(254,97,208,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(254,97,208,1)"}},"hoveron":"points","name":"psychic, water","legendgroup":"psychic, water","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[115,120],"y":[1,1.9],"text":["weight: 115.0<br />height: 1.0<br />type: rock, ground<br />rhyhorn","weight: 120.0<br />height: 1.9<br />type: rock, ground<br />rhydon"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(255,98,191,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(255,98,191,1)"}},"hoveron":"points","name":"rock, ground","legendgroup":"rock, ground","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[6,60],"y":[0.3,1],"text":["weight:   6.0<br />height: 0.3<br />type: steel, electric<br />magnemite","weight:  60.0<br />height: 1.0<br />type: steel, electric<br />magneton"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(255,101,173,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(255,101,173,1)"}},"hoveron":"points","name":"steel, electric","legendgroup":"steel, electric","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[9,22.5,85.5,19.6,76.6,12.4,20,90,4,6.5,60,8,25,15,39,34.5,10,29],"y":[0.5,1,1.6,0.8,1.7,0.6,1,1.1,0.3,0.4,1.3,0.4,1.2,0.6,1.3,0.8,0.9,1],"text":["weight:   9.0<br />height: 0.5<br />type: water<br />squirtle","weight:  22.5<br />height: 1.0<br />type: water<br />wartortle","weight:  85.5<br />height: 1.6<br />type: water<br />blastoise","weight:  19.6<br />height: 0.8<br />type: water<br />psyduck","weight:  76.6<br />height: 1.7<br />type: water<br />golduck","weight:  12.4<br />height: 0.6<br />type: water<br />poliwag","weight:  20.0<br />height: 1.0<br />type: water<br />poliwhirl","weight:  90.0<br />height: 1.1<br />type: water<br />seel","weight:   4.0<br />height: 0.3<br />type: water<br />shellder","weight:   6.5<br />height: 0.4<br />type: water<br />krabby","weight:  60.0<br />height: 1.3<br />type: water<br />kingler","weight:   8.0<br />height: 0.4<br />type: water<br />horsea","weight:  25.0<br />height: 1.2<br />type: water<br />seadra","weight:  15.0<br />height: 0.6<br />type: water<br />goldeen","weight:  39.0<br />height: 1.3<br />type: water<br />seaking","weight:  34.5<br />height: 0.8<br />type: water<br />staryu","weight:  10.0<br />height: 0.9<br />type: water<br />magikarp","weight:  29.0<br />height: 1.0<br />type: water<br />vaporeon"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(255,106,154,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(255,106,154,1)"}},"hoveron":"points","name":"water","legendgroup":"water","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[7.5,35,11.5,40.5],"y":[0.4,1,0.5,1.3],"text":["weight:   7.5<br />height: 0.4<br />type: water, rock<br />omanyte","weight:  35.0<br />height: 1.0<br />type: water, rock<br />omastar","weight:  11.5<br />height: 0.5<br />type: water, rock<br />kabuto","weight:  40.5<br />height: 1.3<br />type: water, rock<br />kabutops"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(253,112,132,1)","opacity":1,"size":5.66929133858268,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(253,112,132,1)"}},"hoveron":"points","name":"water, rock","legendgroup":"water, rock","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":23.3059360730594,"r":7.30593607305936,"b":37.2602739726027,"l":43.1050228310502},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-22.895,482.995],"tickmode":"array","ticktext":["0","100","200","300","400"],"tickvals":[0,100,200,300,400],"categoryorder":"array","categoryarray":["0","100","200","300","400"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"weight","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-0.23,9.23],"tickmode":"array","ticktext":["0.0","2.5","5.0","7.5"],"tickvals":[0,2.5,5,7.5],"categoryorder":"array","categoryarray":["0.0","2.5","5.0","7.5"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"height","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"y":0.938132733408324},"annotations":[{"text":"type","x":1.02,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"left","yanchor":"bottom","legendTitle":true}],"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"6510661e9e45":{"x":{},"y":{},"colour":{},"text":{},"type":"scatter"}},"cur_data":"6510661e9e45","visdat":{"6510661e9e45":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script src="libs/devailly.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

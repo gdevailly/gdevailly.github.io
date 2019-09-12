@@ -1,0 +1,426 @@
+---
+title: "Petite introduction au package purrr"
+subtitle: ""
+author: "Guillaume Devailly"
+institute: "INRA"
+date: "2018/09/17"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: [default, "libs/uo.css", "libs/uo-fonts.css"]
+    chakra: libs/remark-latest.min.js
+    nature:
+      beforeInit: "libs/devailly.js"
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(knitr)
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    cache = FALSE
+)
+```
+
+```{r, message=FALSE}
+library(purrr)    # the package I'm going to present
+library(jsonlite) # importing JSON data as R list
+library(dplyr)    # imported for tiblle, pipe, etc.
+```
+
+---
+class: center
+
+# Je veux en savoir plus sur Pikachu
+
+![:img_scale 80%](img/PokéAPI.png)
+
+---
+
+# Je veux en savoir plus sur Pikachu
+
+```{r}
+pikachu <- jsonlite::fromJSON(
+    "https://pokeapi.co/api/v2/pokemon/pikachu"      
+)
+str(pikachu, max.level = 1)
+```
+
+---
+
+# Quel est l'Indice de Masse Corporelle de Pikachu ?
+### (IMC, ou BMI en anglais)
+
+```{r}
+with(pikachu, tibble(
+    name = "Pikachu",
+    weight = weight/10, # API in hectograls, we want kilograms
+    height = height/10, # API in decimeters, we want meters
+    BMI = weight / (height^2),
+    type = paste(types$type$name, collapse = ", ") # Pokemons can have several types, collapsing
+))
+```
+
+---
+
+# Mais si je m'interesse aussi à Bulbizarre, Salamèche et Carapuce ?
+
+---
+Solution 1 : copier, coller, modifier
+
+```{r}
+bulbasaur <- jsonlite::fromJSON(
+    "https://pokeapi.co/api/v2/pokemon/bulbasaur"    
+)
+with(bulbasaur, tibble(
+    name = "bulbasaur",
+    weight = weight/10, 
+    height = height/10,
+    BMI = weight / (height^2),
+    type = paste(types$type$name, collapse = ", ") 
+))
+
+charmander <- jsonlite::fromJSON(
+    "https://pokeapi.co/api/v2/pokemon/charmander"      
+)
+with(charmander, tibble(
+    name = "charmander",
+    weight = weight/10,
+    height = height/10, 
+    BMI = weight / (height^2),
+    type = paste(types$type$name, collapse = ", ")
+))
+
+squirtle <- jsonlite::fromJSON(
+    "https://pokeapi.co/api/v2/pokemon/squirtle"      
+)
+with(squirtle, tibble(
+    name = "squirtle",
+    weight = weight/10,
+    height = height/10, 
+    BMI = weight / (height^2),
+    type = paste(types$type$name, collapse = ", ")
+))
+```
+
+---
+Solution 1 : copier, coller, **modifier**
+
+```{r, tidy=FALSE, }
+bulbasaur <- jsonlite::fromJSON( #<<
+    "https://pokeapi.co/api/v2/pokemon/bulbasaur" #<<      
+)
+with(bulbasaur, tibble( #<<
+    name = "bulbasaur", #<<
+    weight = weight/10, 
+    height = height/10, 
+    BMI = weight / (height^2),
+    type = paste(types$type$name, collapse = ", ") 
+))
+
+charmander <- jsonlite::fromJSON( #<<
+    "https://pokeapi.co/api/v2/pokemon/charmander" #<<      
+)
+with(charmander, tibble( #<<
+    name = "charmander", #<<
+    weight = weight/10, 
+    height = height/10, 
+    BMI = weight / (height^2),
+    type = paste(types$type$name, collapse = ", ") 
+))
+
+squirtle <- jsonlite::fromJSON( #<<
+    "https://pokeapi.co/api/v2/pokemon/squirtle" #<<
+)
+with(squirtle, tibble( #<<
+    name = "squirtle", #<<
+    weight = weight/10,
+    height = height/10, 
+    BMI = weight / (height^2),
+    type = paste(types$type$name, collapse = ", ")
+))
+```
+
+---
+
+* laborieux
+* source d'erreure
+* répercuter tout changement dans chaque copier - coller
+
+Mais les IDE peuvent aider :
+* Rechercher et Remplacer
+* curseurs multiples (alt + click sour RStudio)
+
+---
+Solution 2: une boucle `for`
+
+```{r}
+my_pokemons <- c("pikachu", "bulbasaur", "charmander", "squirtle")
+
+pokemon_bmi <- tibble( # pré-allocation
+    name = character(0),
+    weight = double(0),
+    height = double(0),
+    bmi = double(0),
+    type = character(0)
+)
+
+for (i in seq_along(my_pokemons)) {
+    poke_i <-  jsonlite::fromJSON(
+        paste0("https://pokeapi.co/api/v2/pokemon/", my_pokemons[i])
+    ) 
+    pokemon_bmi[i, ] <- with(poke_i, tibble( 
+        name =  my_pokemons[i],
+        weight = weight/10,
+        height = height/10, 
+        BMI = weight / (height^2),
+        type = paste(types$type$name, collapse = ", ")
+    ))
+}
+```
+
+---
+
+```{r}
+pokemon_bmi
+```
+
+* fonctionne
+* rapide
+
+Mais :
+* verbeux
+* crée des variables dans l'environement global
+* peut être lent si l'objet grandit : `pokemon_bmi <- rbind(pokemon_bmi, new_pokemon)`
+* besoin de réfléchir pour ne pas tomber dans ce genre de piège
+* non immédiatement parralisable
+
+---
+
+La solution idiomatique : `lapply()`
+
+Étape 1 : créer une fonction
+
+```{r}
+get_pokemon_bmi <- function(poke_name, sleep = 0) {
+    my_pokemon <-  jsonlite::fromJSON(
+        paste0("https://pokeapi.co/api/v2/pokemon/", poke_name)
+    ) 
+    Sys.sleep(sleep)
+    return(
+        with(my_pokemon, tibble( 
+            name = name,
+            weight = weight/10,
+            height = height/10, 
+            BMI = weight / (height^2),
+            type = paste(types$type$name, collapse = ", ")
+        ))
+    )
+}
+
+get_pokemon_bmi("pikachu")
+```
+
+---
+
+Étape 2 : appeler la fonction sur chaque élément d'un vecteur
+
+```{r}
+my_pokemons <- c("pikachu", "bulbasaur", "charmander", "squirtle")
+
+pokemon_bmi <- lapply(
+    my_pokemons, # for each element in my_pokemons
+    get_pokemon_bmi # run function get_pokemon_bmi 
+)
+
+str(pokemon_bmi) # a list :-(
+```
+
+---
+
+Étape 3 : transformer la liste en tableau
+```{r}
+pokemon_bmi <- do.call(
+    rbind,
+    pokemon_bmi
+)
+
+pokemon_bmi
+```
+
+---
+
+* en théorie, mois besoin de mettre les mains dans le camboui
+* en pratique, `x <- do.call(rbind, x)` ...
+* facilement parallélisable<sup>1</sup> :
+```{r}
+pokemon_bmi <- parallel::mclapply(
+    my_pokemons,
+    get_pokemon_bmi,
+    mc.cores = 8
+)
+```
+
+[1] GNU/linux et macOS, sur windows, passer par des alternatives
+
+---
+
+Solution 4: le tidyverse
+
+Étape 1 : définir une fonction
+Étape 2 : itérer
+```{r}
+my_pokemons <- c("pikachu", "bulbasaur", "charmander", "squirtle")
+
+pokemon_bmi <- map_dfr( # le résultat est un _D_ata _F_rame aggloméré par _R_angs
+    my_pokemons,
+    get_pokemon_bmi
+)
+
+pokemon_bmi
+```
+
+---
+
+* moins besoin de mettre lesmains dans le camboui
+* facilement parralelisable :
+```{r, message=FALSE}
+library(furrr)
+plan(multiprocess(workers = 8))
+future_map_dfr(my_pokemons, get_pokemon_bmi)
+```
+
+---
+
+Une fonction `map_*` par type de résultat souhaité :
+
+```{r echo=FALSE}
+
+kable(
+    tribble(
+        ~`function`, ~result,
+        "map()"    , "list",
+        "map_chr()", "character vector",
+        "map_int()", "integer vector",
+        "map_dbl()", "double vector",
+        "map_lgl()", "logical vector",
+        "map_dfr()", "data frame, row bind",
+        "map_dfc()", "data frame, col bind",
+        "walk()"   , "no return (side effects)"
+    ), format = "html"
+)
+
+```
+
+---
+
+Fonctions annonyes:
+
+```{r}
+map_dbl(my_pokemons, function(x) {
+    get_pokemon_bmi(x)[["height"]]
+})
+
+map_dbl(my_pokemons, ~get_pokemon_bmi(.x)[["height"]])
+```
+
+---
+
+Préserve les noms :
+
+```{r}
+my_pokemons
+
+set_names(my_pokemons)
+
+my_pokemons %>%
+    map_chr(~get_pokemon_bmi(.x)[["type"]])
+
+set_names(my_pokemons) %>%
+    map_chr(~get_pokemon_bmi(.x)[["type"]])
+```
+
+---
+Rattrapage d'erreur:
+
+```{r, error=TRUE}
+my_pokemons <- c("pikachu", "bulbasaur", "charmander", "squirtle", "magicarpe")
+map(my_pokemons, get_pokemon_bmi)
+```
+
+**Tout** le calcul est perdu à cause d'une erreure sur **une seule** ittération 
+(T__T)
+
+---
+
+```{r}
+safe_get_pokemon_bmi <- safely(get_pokemon_bmi)
+
+safe_get_pokemon_bmi("pikachu")
+
+safe_get_pokemon_bmi("magicarpe")
+
+```
+
+---
+
+```{r}
+prelim_results <- set_names(my_pokemons) %>%
+    map(safe_get_pokemon_bmi)
+
+success <- map_lgl(prelim_results, ~is.null(.x$error))
+success
+
+map_dfr(prelim_results[success], "result")
+```
+
+---
+
+Ou alors :
+```{r}
+possibly_get_pokemon_bmi <- possibly(get_pokemon_bmi, otherwise = NULL)
+
+possibly_get_pokemon_bmi("pikachu")
+
+possibly_get_pokemon_bmi("magicarpe")
+
+my_pokemons
+map_dfr(
+    my_pokemons,
+    ~possibly(get_pokemon_bmi, otherwise = NULL)(.x)
+)
+```
+
+---
+
+```{r, eval=FALSE}
+pokemon_bmi <- map_dfr(1:151, possibly_get_pokemon_bmi, sleep = 1)
+
+library(ggplot2)
+library(plotly)
+
+p <- ggplot(pokemon_bmi, aes(x = weight, y = height, color = type, text = name)) +
+    geom_point()
+
+ggplotly(p, tooltip = "text")
+
+```
+
+---
+
+```{r, echo=FALSE, message=FALSE}
+pokemon_bmi <- map_dfr(1:151, possibly_get_pokemon_bmi, sleep = 1)
+
+library(ggplot2)
+library(plotly)
+
+p <- ggplot(pokemon_bmi, aes(x = weight, y = height, color = type, text = name)) +
+    geom_point()
+
+ggplotly(p, tooltip = "text")
+
+```
