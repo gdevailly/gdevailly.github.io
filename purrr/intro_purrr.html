@@ -3,19 +3,19 @@
   <head>
     <title>Petite introduction au package purrr</title>
     <meta charset="utf-8" />
-    <meta name="author" content="guillaume devailly" />
+    <meta name="author" content="Guillaume Devailly" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
-    <link rel="stylesheet" href="libs/uo.css" type="text/css" />
-    <link rel="stylesheet" href="libs/uo-fonts.css" type="text/css" />
+    <link rel="stylesheet" href="libs\uo.css" type="text/css" />
+    <link rel="stylesheet" href="libs\uo-fonts.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
 # Petite introduction au package purrr
-### guillaume devailly
+### Guillaume Devailly
 ### inra
-### 2018/09/17
+### 2019/09/17
 
 ---
 
@@ -35,7 +35,7 @@ class: center
 ```r
 library(purrr)    # the package I'm going to present
 library(jsonlite) # importing JSON data as R list
-library(dplyr)    # imported for tiblle, pipe, etc.
+library(dplyr)    # imported for tible, pipe, etc.
 ```
 ---
 
@@ -74,7 +74,7 @@ str(pikachu, max.level = 1)
 ```r
 with(pikachu, tibble(
     name = "Pikachu",
-    weight = weight/10, # API in hectograls, we want kilograms
+    weight = weight/10, # API in hectograms, we want kilograms
     height = height/10, # API in decimeters, we want meters
     BMI = weight / (height^2),
     type = paste(types$type$name, collapse = ", "), # Pokemons can have several types, collapsing
@@ -83,12 +83,12 @@ with(pikachu, tibble(
 ## # A tibble: 1 x 6
 ##   name   weight height   BMI type    sprite                                
 ##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;                                 
-## 1 Pikac…      6    0.4  37.5 electr… https://raw.githubusercontent.com/Pok…
+## 1 Pikac~      6    0.4  37.5 electr~ https://raw.githubusercontent.com/Pok~
 ```
 
 ---
 
-# Mais si je m'interesse aussi à Bulbizarre, Salamèche et Carapuce ?
+# Mais si je m'intéresse aussi à Bulbizarre, Salamèche et Carapuce ?
 
 ---
 Solution 1 : copier, coller, modifier
@@ -109,7 +109,7 @@ with(bulbasaur, tibble(
 ## # A tibble: 1 x 6
 ##   name    weight height   BMI type      sprite                             
 ##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;                              
-## 1 bulbas…    6.9    0.7  14.1 poison, … https://raw.githubusercontent.com/…
+## 1 bulbas~    6.9    0.7  14.1 poison, ~ https://raw.githubusercontent.com/~
 
 charmander &lt;- jsonlite::fromJSON(
     "https://pokeapi.co/api/v2/pokemon/charmander"      
@@ -125,7 +125,7 @@ with(charmander, tibble(
 ## # A tibble: 1 x 6
 ##   name     weight height   BMI type  sprite                                
 ##   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;                                 
-## 1 charman…    8.5    0.6  23.6 fire  https://raw.githubusercontent.com/Pok…
+## 1 charman~    8.5    0.6  23.6 fire  https://raw.githubusercontent.com/Pok~
 
 squirtle &lt;- jsonlite::fromJSON(
     "https://pokeapi.co/api/v2/pokemon/squirtle"      
@@ -141,7 +141,7 @@ with(squirtle, tibble(
 ## # A tibble: 1 x 6
 ##   name    weight height   BMI type  sprite                                 
 ##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;                                  
-## 1 squirt…      9    0.5    36 water https://raw.githubusercontent.com/Poke…
+## 1 squirt~      9    0.5    36 water https://raw.githubusercontent.com/Poke~
 ```
 
 ---
@@ -163,7 +163,7 @@ Solution 1 : copier, coller, **modifier**
 ## # A tibble: 1 x 6
 ##   name    weight height   BMI type      sprite                             
 ##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;                              
-## 1 bulbas…    6.9    0.7  14.1 poison, … https://raw.githubusercontent.com/…
+## 1 bulbas~    6.9    0.7  14.1 poison, ~ https://raw.githubusercontent.com/~
 
 *charmander &lt;- jsonlite::fromJSON(
 *   "https://pokeapi.co/api/v2/pokemon/charmander"
@@ -179,7 +179,7 @@ Solution 1 : copier, coller, **modifier**
 ## # A tibble: 1 x 6
 ##   name     weight height   BMI type  sprite                                
 ##   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;                                 
-## 1 charman…    8.5    0.6  23.6 fire  https://raw.githubusercontent.com/Pok…
+## 1 charman~    8.5    0.6  23.6 fire  https://raw.githubusercontent.com/Pok~
 
 *squirtle &lt;- jsonlite::fromJSON(
 *   "https://pokeapi.co/api/v2/pokemon/squirtle"
@@ -195,13 +195,13 @@ Solution 1 : copier, coller, **modifier**
 ## # A tibble: 1 x 6
 ##   name    weight height   BMI type  sprite                                 
 ##   &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;                                  
-## 1 squirt…      9    0.5    36 water https://raw.githubusercontent.com/Poke…
+## 1 squirt~      9    0.5    36 water https://raw.githubusercontent.com/Poke~
 ```
 
 ---
 
 * laborieux
-* source d'erreure
+* source d'erreurs
 * répercuter tout changement dans chaque copier - coller
 
 Mais les IDE peuvent aider :
@@ -247,10 +247,10 @@ pokemon_bmi
 ## # A tibble: 4 x 6
 ##   name     weight height   bmi type     sprite                             
 ## * &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;                              
-## 1 pikachu     6      0.4  37.5 electric https://raw.githubusercontent.com/…
-## 2 bulbasa…    6.9    0.7  14.1 poison,… https://raw.githubusercontent.com/…
-## 3 charman…    8.5    0.6  23.6 fire     https://raw.githubusercontent.com/…
-## 4 squirtle    9      0.5  36   water    https://raw.githubusercontent.com/…
+## 1 pikachu     6      0.4  37.5 electric https://raw.githubusercontent.com/~
+## 2 bulbasa~    6.9    0.7  14.1 poison,~ https://raw.githubusercontent.com/~
+## 3 charman~    8.5    0.6  23.6 fire     https://raw.githubusercontent.com/~
+## 4 squirtle    9      0.5  36   water    https://raw.githubusercontent.com/~
 ```
 
 * fonctionne
@@ -258,10 +258,10 @@ pokemon_bmi
 
 Mais :
 * verbeux
-* crée des variables dans l'environement global
+* crée des variables dans l'environnement global
 * peut être lent si l'objet grandit : `pokemon_bmi &lt;- rbind(pokemon_bmi, new_pokemon)`
 * besoin de réfléchir pour ne pas tomber dans ce genre de piège
-* non immédiatement parralelisable
+* non immédiatement parallélisable
 
 ---
 
@@ -291,7 +291,7 @@ get_pokemon_bmi("pikachu")
 ## # A tibble: 1 x 6
 ##   name   weight height   BMI type    sprite                                
 ##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;                                 
-## 1 pikac…      6    0.4  37.5 electr… https://raw.githubusercontent.com/Pok…
+## 1 pikac~      6    0.4  37.5 electr~ https://raw.githubusercontent.com/Pok~
 ```
 
 ---
@@ -353,16 +353,17 @@ pokemon_bmi
 ## # A tibble: 4 x 6
 ##   name     weight height   BMI type     sprite                             
 ##   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;                              
-## 1 pikachu     6      0.4  37.5 electric https://raw.githubusercontent.com/…
-## 2 bulbasa…    6.9    0.7  14.1 poison,… https://raw.githubusercontent.com/…
-## 3 charman…    8.5    0.6  23.6 fire     https://raw.githubusercontent.com/…
-## 4 squirtle    9      0.5  36   water    https://raw.githubusercontent.com/…
+## 1 pikachu     6      0.4  37.5 electric https://raw.githubusercontent.com/~
+## 2 bulbasa~    6.9    0.7  14.1 poison,~ https://raw.githubusercontent.com/~
+## 3 charman~    8.5    0.6  23.6 fire     https://raw.githubusercontent.com/~
+## 4 squirtle    9      0.5  36   water    https://raw.githubusercontent.com/~
 ```
 
 ---
 
-* en théorie, moins besoin de mettre les mains dans le camboui
+* en théorie, moins besoin de mettre les mains dans le cambouis
 * en pratique, `x &lt;- do.call(rbind, x)` ...
+* force a écrire des fonctions
 * facilement parallélisable :
 
 ```r
@@ -371,6 +372,7 @@ pokemon_bmi &lt;- parallel::mclapply(
     get_pokemon_bmi,
     mc.cores = 8
 )
+## Error in parallel::mclapply(my_pokemons, get_pokemon_bmi, mc.cores = 8): 'mc.cores' &gt; 1 is not supported on Windows
 ```
 
 ---
@@ -393,16 +395,16 @@ pokemon_bmi
 ## # A tibble: 4 x 6
 ##   name     weight height   BMI type     sprite                             
 ##   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;                              
-## 1 pikachu     6      0.4  37.5 electric https://raw.githubusercontent.com/…
-## 2 bulbasa…    6.9    0.7  14.1 poison,… https://raw.githubusercontent.com/…
-## 3 charman…    8.5    0.6  23.6 fire     https://raw.githubusercontent.com/…
-## 4 squirtle    9      0.5  36   water    https://raw.githubusercontent.com/…
+## 1 pikachu     6      0.4  37.5 electric https://raw.githubusercontent.com/~
+## 2 bulbasa~    6.9    0.7  14.1 poison,~ https://raw.githubusercontent.com/~
+## 3 charman~    8.5    0.6  23.6 fire     https://raw.githubusercontent.com/~
+## 4 squirtle    9      0.5  36   water    https://raw.githubusercontent.com/~
 ```
 
 ---
 
-* moins besoin de mettre les mains dans le camboui
-* facilement parralelisable :
+* moins besoin de mettre les mains dans le cambouis
+* facilement parallélisable :
 
 ```r
 library(furrr)
@@ -411,10 +413,10 @@ future_map_dfr(my_pokemons, get_pokemon_bmi)
 ## # A tibble: 4 x 6
 ##   name     weight height   BMI type     sprite                             
 ##   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;                              
-## 1 pikachu     6      0.4  37.5 electric https://raw.githubusercontent.com/…
-## 2 bulbasa…    6.9    0.7  14.1 poison,… https://raw.githubusercontent.com/…
-## 3 charman…    8.5    0.6  23.6 fire     https://raw.githubusercontent.com/…
-## 4 squirtle    9      0.5  36   water    https://raw.githubusercontent.com/…
+## 1 pikachu     6      0.4  37.5 electric https://raw.githubusercontent.com/~
+## 2 bulbasa~    6.9    0.7  14.1 poison,~ https://raw.githubusercontent.com/~
+## 3 charman~    8.5    0.6  23.6 fire     https://raw.githubusercontent.com/~
+## 4 squirtle    9      0.5  36   water    https://raw.githubusercontent.com/~
 ```
 
 ---
@@ -466,7 +468,7 @@ Une fonction `map_*` par type de résultat souhaité :
 
 ---
 
-Fonctions annonyes:
+Fonctions anonymes :
 
 
 ```r
@@ -503,7 +505,7 @@ set_names(my_pokemons) %&gt;%
 ```
 
 ---
-Attrapage d'erreur:
+Attrapage d'erreur :
 
 
 ```r
@@ -512,7 +514,7 @@ map(my_pokemons, get_pokemon_bmi)
 ## Error in open.connection(con, "rb"): HTTP error 404.
 ```
 
-**Tout** le calcul est perdu à cause d'une erreure sur **une seule** ittération 
+**Tout** le calcul est perdu à cause d'une erreur sur **une seule** itération 
 (T__T)
 
 ---
@@ -526,7 +528,7 @@ safe_get_pokemon_bmi("pikachu")
 ## # A tibble: 1 x 6
 ##   name   weight height   BMI type    sprite                                
 ##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;                                 
-## 1 pikac…      6    0.4  37.5 electr… https://raw.githubusercontent.com/Pok…
+## 1 pikac~      6    0.4  37.5 electr~ https://raw.githubusercontent.com/Pok~
 ## 
 ## $error
 ## NULL
@@ -555,10 +557,10 @@ map_dfr(prelim_results[success], "result")
 ## # A tibble: 4 x 6
 ##   name     weight height   BMI type     sprite                             
 ##   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;                              
-## 1 pikachu     6      0.4  37.5 electric https://raw.githubusercontent.com/…
-## 2 bulbasa…    6.9    0.7  14.1 poison,… https://raw.githubusercontent.com/…
-## 3 charman…    8.5    0.6  23.6 fire     https://raw.githubusercontent.com/…
-## 4 squirtle    9      0.5  36   water    https://raw.githubusercontent.com/…
+## 1 pikachu     6      0.4  37.5 electric https://raw.githubusercontent.com/~
+## 2 bulbasa~    6.9    0.7  14.1 poison,~ https://raw.githubusercontent.com/~
+## 3 charman~    8.5    0.6  23.6 fire     https://raw.githubusercontent.com/~
+## 4 squirtle    9      0.5  36   water    https://raw.githubusercontent.com/~
 ```
 
 ---
@@ -572,7 +574,7 @@ possibly_get_pokemon_bmi("pikachu")
 ## # A tibble: 1 x 6
 ##   name   weight height   BMI type    sprite                                
 ##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;                                 
-## 1 pikac…      6    0.4  37.5 electr… https://raw.githubusercontent.com/Pok…
+## 1 pikac~      6    0.4  37.5 electr~ https://raw.githubusercontent.com/Pok~
 
 possibly_get_pokemon_bmi("magicarpe")
 ## NULL
@@ -586,15 +588,15 @@ map_dfr(
 ## # A tibble: 4 x 6
 ##   name     weight height   BMI type     sprite                             
 ##   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;                              
-## 1 pikachu     6      0.4  37.5 electric https://raw.githubusercontent.com/…
-## 2 bulbasa…    6.9    0.7  14.1 poison,… https://raw.githubusercontent.com/…
-## 3 charman…    8.5    0.6  23.6 fire     https://raw.githubusercontent.com/…
-## 4 squirtle    9      0.5  36   water    https://raw.githubusercontent.com/…
+## 1 pikachu     6      0.4  37.5 electric https://raw.githubusercontent.com/~
+## 2 bulbasa~    6.9    0.7  14.1 poison,~ https://raw.githubusercontent.com/~
+## 3 charman~    8.5    0.6  23.6 fire     https://raw.githubusercontent.com/~
+## 4 squirtle    9      0.5  36   water    https://raw.githubusercontent.com/~
 ```
 
 ---
 
-Attention : les erreures sont devenues silencieuses !
+Attention : les erreurs sont devenues silencieuses !
 
 ```r
 get_pokemon_bmi("magicarpe")
@@ -610,6 +612,7 @@ possibly(get_pokemon_bmi, otherwise = NULL, quiet = FALSE)("magicarpe")
 
 
 ---
+Et sur 151 pokémon ?
 
 
 ```r
@@ -633,49 +636,50 @@ class: center
 ![](intro_purrr_files/figure-html/unnamed-chunk-23-1.png)&lt;!-- --&gt;
 
 ---
-
-# Pour aller plus loin
-
-- passer deux séries d'arguments : `map2(x, y, fun)`
-- passer n séries d'arguments : `pmap(list(x, y, z, ...), fun)`
-- éxécuter sur un sous ensemble : `map_at(x, at, fun)`, `map_if(x, cond, fun)`
-- composer des fonctions : `compose(fun1, fun2)`
-- et plus encore !
-
-Liens :
-- [Itération de fonctions avec purrr](http://perso.ens-lyon.fr/lise.vaudor/iterer-des-fonctions-avec-purrr/)
-- [Lesser known purrr tricks](https://www.brodrigues.co/blog/2017-03-24-lesser_known_purrr/)
-
----
-
 # Bonus
 
 Vectorisez vos fonctions, plus besoin de boucles !
 
 
 ```r
-possibly_get_pokemon_bmi(c("pikachu", "bulbasaur", "charmander", "squirtle", "magicarpe"))
-## NULL
+get_pokemon_bmi(c("pikachu", "bulbasaur", "charmander", "squirtle"))
+## Error: lexical error: invalid char in json text.
+##                                        https://pokeapi.co/api/v2/pokem
+##                      (right here) ------^
 
 get_pokemon_bmi_v &lt;- function(poke_names, sleep = 0) {
-    map_dfr(poke_names, possibly_get_pokemon_bmi, sleep = sleep)
+    map_dfr(poke_names, get_pokemon_bmi, sleep = sleep)
 }
 
-get_pokemon_bmi_v(c("pikachu", "bulbasaur", "charmander", "squirtle", "magicarpe"))
+get_pokemon_bmi_v(c("pikachu", "bulbasaur", "charmander", "squirtle"))
 ## # A tibble: 4 x 6
 ##   name     weight height   BMI type     sprite                             
 ##   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;                              
-## 1 pikachu     6      0.4  37.5 electric https://raw.githubusercontent.com/…
-## 2 bulbasa…    6.9    0.7  14.1 poison,… https://raw.githubusercontent.com/…
-## 3 charman…    8.5    0.6  23.6 fire     https://raw.githubusercontent.com/…
-## 4 squirtle    9      0.5  36   water    https://raw.githubusercontent.com/…
+## 1 pikachu     6      0.4  37.5 electric https://raw.githubusercontent.com/~
+## 2 bulbasa~    6.9    0.7  14.1 poison,~ https://raw.githubusercontent.com/~
+## 3 charman~    8.5    0.6  23.6 fire     https://raw.githubusercontent.com/~
+## 4 squirtle    9      0.5  36   water    https://raw.githubusercontent.com/~
 
 get_pokemon_bmi_v("pikachu")
 ## # A tibble: 1 x 6
 ##   name   weight height   BMI type    sprite                                
 ##   &lt;chr&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;                                 
-## 1 pikac…      6    0.4  37.5 electr… https://raw.githubusercontent.com/Pok…
+## 1 pikac~      6    0.4  37.5 electr~ https://raw.githubusercontent.com/Pok~
 ```
+
+---
+
+# Pour aller plus loin
+
+- passer deux séries d'arguments : `map2(x, y, fun)`
+- passer n séries d'arguments : `pmap(list(x, y, z, ...), fun)`
+- exécuter sur un sous ensemble : `map_at(x, at, fun)`, `map_if(x, cond, fun)`
+- composer des fonctions : `compose(fun1, fun2)`
+- et plus encore !
+
+Liens :
+- [Itération de fonctions avec purrr](http://perso.ens-lyon.fr/lise.vaudor/iterer-des-fonctions-avec-purrr/)
+- [Lesser known purrr tricks](https://www.brodrigues.co/blog/2017-03-24-lesser_known_purrr/)
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
