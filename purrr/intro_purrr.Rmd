@@ -1,8 +1,8 @@
 ---
 title: "Petite introduction au package purrr"
 subtitle: ""
-author: "Guillaume Devailly"
-institute: "INRA"
+author: "guillaume devailly"
+institute: "inra"
 date: "2018/09/17"
 output:
   xaringan::moon_reader:
@@ -16,32 +16,31 @@ output:
       countIncrementalSlides: false
       ratio: "16:9"
 ---
+class: center
+
+# Je veux en savoir plus sur Pikachu
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
 library(knitr)
 knitr::opts_chunk$set(
     collapse = TRUE,
-    cache = FALSE
+    cache = TRUE
 )
 ```
+
+--
+
+![:img_scale 80%](img/PokéAPI.png)
+
+---
 
 ```{r, message=FALSE}
 library(purrr)    # the package I'm going to present
 library(jsonlite) # importing JSON data as R list
 library(dplyr)    # imported for tiblle, pipe, etc.
 ```
-
 ---
-class: center
-
-# Je veux en savoir plus sur Pikachu
-
-![:img_scale 80%](img/PokéAPI.png)
-
----
-
-# Je veux en savoir plus sur Pikachu
 
 ```{r}
 pikachu <- jsonlite::fromJSON(
@@ -53,7 +52,7 @@ str(pikachu, max.level = 1)
 ---
 
 # Quel est l'Indice de Masse Corporelle de Pikachu ?
-### (IMC, ou BMI en anglais)
+### (imc, ou bmi en anglais)
 
 ```{r}
 with(pikachu, tibble(
@@ -61,7 +60,8 @@ with(pikachu, tibble(
     weight = weight/10, # API in hectograls, we want kilograms
     height = height/10, # API in decimeters, we want meters
     BMI = weight / (height^2),
-    type = paste(types$type$name, collapse = ", ") # Pokemons can have several types, collapsing
+    type = paste(types$type$name, collapse = ", "), # Pokemons can have several types, collapsing
+    sprite = sprites$front_default
 ))
 ```
 
@@ -81,7 +81,8 @@ with(bulbasaur, tibble(
     weight = weight/10, 
     height = height/10,
     BMI = weight / (height^2),
-    type = paste(types$type$name, collapse = ", ") 
+    type = paste(types$type$name, collapse = ", "),
+    sprite = sprites$front_default
 ))
 
 charmander <- jsonlite::fromJSON(
@@ -92,7 +93,8 @@ with(charmander, tibble(
     weight = weight/10,
     height = height/10, 
     BMI = weight / (height^2),
-    type = paste(types$type$name, collapse = ", ")
+    type = paste(types$type$name, collapse = ", "),
+    sprite = sprites$front_default
 ))
 
 squirtle <- jsonlite::fromJSON(
@@ -103,7 +105,8 @@ with(squirtle, tibble(
     weight = weight/10,
     height = height/10, 
     BMI = weight / (height^2),
-    type = paste(types$type$name, collapse = ", ")
+    type = paste(types$type$name, collapse = ", "),
+    sprite = sprites$front_default
 ))
 ```
 
@@ -119,7 +122,8 @@ with(bulbasaur, tibble( #<<
     weight = weight/10, 
     height = height/10, 
     BMI = weight / (height^2),
-    type = paste(types$type$name, collapse = ", ") 
+    type = paste(types$type$name, collapse = ", "),
+    sprite = sprites$front_default
 ))
 
 charmander <- jsonlite::fromJSON( #<<
@@ -130,7 +134,8 @@ with(charmander, tibble( #<<
     weight = weight/10, 
     height = height/10, 
     BMI = weight / (height^2),
-    type = paste(types$type$name, collapse = ", ") 
+    type = paste(types$type$name, collapse = ", "),
+    sprite = sprites$front_default
 ))
 
 squirtle <- jsonlite::fromJSON( #<<
@@ -141,7 +146,8 @@ with(squirtle, tibble( #<<
     weight = weight/10,
     height = height/10, 
     BMI = weight / (height^2),
-    type = paste(types$type$name, collapse = ", ")
+    type = paste(types$type$name, collapse = ", "),
+    sprite = sprites$front_default
 ))
 ```
 
@@ -166,7 +172,8 @@ pokemon_bmi <- tibble( # pré-allocation
     weight = double(0),
     height = double(0),
     bmi = double(0),
-    type = character(0)
+    type = character(0),
+    sprite = character(0)
 )
 
 for (i in seq_along(my_pokemons)) {
@@ -178,7 +185,8 @@ for (i in seq_along(my_pokemons)) {
         weight = weight/10,
         height = height/10, 
         BMI = weight / (height^2),
-        type = paste(types$type$name, collapse = ", ")
+        type = paste(types$type$name, collapse = ", "),
+        sprite = sprites$front_default
     ))
 }
 ```
@@ -197,7 +205,7 @@ Mais :
 * crée des variables dans l'environement global
 * peut être lent si l'objet grandit : `pokemon_bmi <- rbind(pokemon_bmi, new_pokemon)`
 * besoin de réfléchir pour ne pas tomber dans ce genre de piège
-* non immédiatement parralisable
+* non immédiatement parralelisable
 
 ---
 
@@ -217,11 +225,11 @@ get_pokemon_bmi <- function(poke_name, sleep = 0) {
             weight = weight/10,
             height = height/10, 
             BMI = weight / (height^2),
-            type = paste(types$type$name, collapse = ", ")
+            type = paste(types$type$name, collapse = ", "),
+            sprite = sprites$front_default
         ))
     )
 }
-
 get_pokemon_bmi("pikachu")
 ```
 
@@ -254,9 +262,9 @@ pokemon_bmi
 
 ---
 
-* en théorie, mois besoin de mettre les mains dans le camboui
+* en théorie, moins besoin de mettre les mains dans le camboui
 * en pratique, `x <- do.call(rbind, x)` ...
-* facilement parallélisable<sup>1</sup> :
+* facilement parallélisable :
 ```{r}
 pokemon_bmi <- parallel::mclapply(
     my_pokemons,
@@ -265,13 +273,12 @@ pokemon_bmi <- parallel::mclapply(
 )
 ```
 
-[1] GNU/linux et macOS, sur windows, passer par des alternatives
-
 ---
 
 Solution 4: le tidyverse
 
 Étape 1 : définir une fonction
+
 Étape 2 : itérer
 ```{r}
 my_pokemons <- c("pikachu", "bulbasaur", "charmander", "squirtle")
@@ -286,9 +293,9 @@ pokemon_bmi
 
 ---
 
-* moins besoin de mettre lesmains dans le camboui
+* moins besoin de mettre les mains dans le camboui
 * facilement parralelisable :
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library(furrr)
 plan(multiprocess(workers = 8))
 future_map_dfr(my_pokemons, get_pokemon_bmi)
@@ -345,7 +352,7 @@ set_names(my_pokemons) %>%
 ```
 
 ---
-Rattrapage d'erreur:
+Attrapage d'erreur:
 
 ```{r, error=TRUE}
 my_pokemons <- c("pikachu", "bulbasaur", "charmander", "squirtle", "magicarpe")
@@ -397,30 +404,81 @@ map_dfr(
 
 ---
 
+Attention : les erreures sont devenues silencieuses !
+```{r error=TRUE}
+get_pokemon_bmi("magicarpe")
+
+possibly(get_pokemon_bmi, otherwise = NULL)("magicarpe")
+
+possibly(get_pokemon_bmi, otherwise = NULL, quiet = FALSE)("magicarpe")
+
+```
+
+
+---
+
 ```{r, eval=FALSE}
 pokemon_bmi <- map_dfr(1:151, possibly_get_pokemon_bmi, sleep = 1)
 
 library(ggplot2)
-library(plotly)
+library(ggimage)
 
-p <- ggplot(pokemon_bmi, aes(x = weight, y = height, color = type, text = name)) +
-    geom_point()
+ggplot(pokemon_bmi, aes(x = weight, y = height, text = name)) +
+    stat_function(fun = function(w) sqrt(w/30), color = "darkred", linetype = "dotted") +
+    stat_function(fun = function(w) sqrt(w/15), color = "orange", linetype = "dotted") +
+    annotate("text", x = rep(350, 2), y = c(3.1, 4.5), label = c("BMI = 30", "BMI = 15"), color = c("darkred", "orange")) +
+    geom_image(aes(image = sprite), size = 0.12) +
+    theme_bw(base_size = 14)
 
-ggplotly(p, tooltip = "text")
+```
+
+---
+class: center
+
+```{r, echo=FALSE, message=FALSE, fig.height=8, fig.width=10}
+pokemon_bmi <- map_dfr(1:151, possibly_get_pokemon_bmi, sleep = 1)
+
+library(ggplot2)
+library(ggimage)
+
+ggplot(pokemon_bmi, aes(x = weight, y = height, text = name)) +
+    stat_function(fun = function(w) sqrt(w/30), color = "darkred", linetype = "dotted") +
+    stat_function(fun = function(w) sqrt(w/15), color = "orange", linetype = "dotted") +
+    annotate("text", x = rep(350, 2), y = c(3.1, 4.5), label = c("BMI = 30", "BMI = 15"), color = c("darkred", "orange")) +
+    geom_image(aes(image = sprite), size = 0.12) +
+    theme_bw(base_size = 14)
 
 ```
 
 ---
 
-```{r, echo=FALSE, message=FALSE}
-pokemon_bmi <- map_dfr(1:151, possibly_get_pokemon_bmi, sleep = 1)
+# Pour aller plus loin
 
-library(ggplot2)
-library(plotly)
+- passer deux séries d'arguments : `map2(x, y, fun)`
+- passer n séries d'arguments : `pmap(list(x, y, z, ...), fun)`
+- éxécuter sur un sous ensemble : `map_at(x, at, fun)`, `map_if(x, cond, fun)`
+- composer des fonctions : `compose(fun1, fun2)`
+- et plus encore !
 
-p <- ggplot(pokemon_bmi, aes(x = weight, y = height, color = type, text = name)) +
-    geom_point()
+Liens :
+- [Itération de fonctions avec purrr](http://perso.ens-lyon.fr/lise.vaudor/iterer-des-fonctions-avec-purrr/)
+- [Lesser known purrr tricks](https://www.brodrigues.co/blog/2017-03-24-lesser_known_purrr/)
 
-ggplotly(p, tooltip = "text")
+---
 
+# Bonus
+
+Vectorisez vos fonctions, plus besoin de boucles !
+
+```{r error = TRUE}
+possibly_get_pokemon_bmi(c("pikachu", "bulbasaur", "charmander", "squirtle", "magicarpe"))
+
+get_pokemon_bmi_v <- function(poke_names, sleep = 0) {
+    map_dfr(poke_names, possibly_get_pokemon_bmi, sleep = sleep)
+}
+
+get_pokemon_bmi_v(c("pikachu", "bulbasaur", "charmander", "squirtle", "magicarpe"))
+
+get_pokemon_bmi_v("pikachu")
 ```
+
