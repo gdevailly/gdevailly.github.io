@@ -230,6 +230,13 @@ class: centre
 ]
 
 ---
+# Correlations between TF ChIP-seq peaks and TSS list
+
+.center[
+![:img_scale 50%](img/hmtss.png)
+]
+
+---
 
 # Heat*seq conclusions & perspectives
 
