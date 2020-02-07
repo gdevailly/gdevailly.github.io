@@ -1,0 +1,643 @@
+---
+title: "Fostering data re-use with interactive visualisations in transcriptomics and epigenomics"
+subtitle: ""
+author: "Guillaume Devailly"
+institute: "INRAE"
+date: "2020/02/07 (updated: `r Sys.Date()`)"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: [default, metropolis, metropolis-fonts, "libs/INRAE_metropolis.css"]
+    chakra: libs/remark-latest.min.js
+    seal: false
+    nature:
+      beforeInit: ["libs/devailly.js", "https://platform.twitter.com/widgets.js"]
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      slideNumberFormat: 'p. %current%'
+      ratio: "16:9"
+---
+
+class: inverse, bottom, font180, clear
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+
+library(knitr)
+opts_chunk$set(cache = FALSE, cache.lazy = FALSE, collapse = TRUE, fig.align = "centre", echo = FALSE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(cowplot)
+library(plotly)
+library(kableExtra)
+
+```
+
+# Fostering data re-use with interactive visualisations of transcriptomics and epigenomics data
+
+<html>
+  <div style='float:left'></div>
+  <hr color='#423089' size=1px width=100%>
+</html>
+.pull-left[
+
+`r icon::fa("twitter")` [@G_Devailly](https://twitter.com/G_Devailly)
+
+Guillaume Devailly  
+Séminaire MIAT  
+2020/02/07
+]
+.pull-right[
+
+![:img_scale 90%](img/INRAE_genphyse_logo_wb.svg)
+]
+
+
+---
+layout: true
+class: font160
+background-image: url("img/INRAE_genphyse_logo.svg")
+background-position: bottom left
+background-size: 20%
+
+---
+
+# One genome, many cell types
+
+.pull-left[
+![](img/bioRender.png)
+![:img_scale 15%](img/biorender_watermark.png)
+]
+.pull-right[
+.centre[
+Differential gene expression =  
+cellular environment + epigenetics
+]
+]
+
+---
+
+# Transcriptomics & Epigenomics data
+
+.pull-left[
+Each experiment is complex and costly, but many datasets and databases are available.
+
+- Expression: RNA-seq
+- Chromatin accessibility: DNAse1, ATAC-seq
+- DNA methylation: WGBS
+- ChIP-seq:
+  * Transcription regulators
+  * Histone variants
+  * Histone modifications
+]
+
+.pull-right[
+![:img_scale 25%](img/ENCODE_logo.png) ![:img_scale 40%](img/RoadmapEpigenomics.png) 
+
+![](img/main_illustration.png)
+]
+
+---
+
+# DNA methylation
+
+![](img/dnameth.png)
+
+---
+
+# DNA methylation
+
+.centre[
+![:img_scale 25%](img/readers.png)
+]
+
+---
+
+# Histone modification
+
+```{r}
+knitr::include_url("https://www.rcsb.org/3d-view/1AOI#stageViewport", height = "500px")
+```
+
+---
+
+# Data re-use 
+
+.pull-left[
+### The good
+- Mostly FAIR data, good enough metadata 
+
+### The bad
+- Domain expertise, experimental artefacts
+- Arguable arbitrary choices during analyses
+]
+
+.pull-right[
+![](img/elf1_1.png)
+]
+
+---
+
+# Data re-use 
+
+.pull-left[
+### The good
+- Mostly FAIR data, good enough metadata 
+
+### The bad
+- Domain expertise, experimental artefacts, 
+- Discussable arbitrary choices during analyses
+
+### The ugly
+- Fat data, too lazy to download it all
+]
+
+.pull-right[
+![](img/elf1_2.png)
+1 experiment: 12.2 GB
+]
+
+---
+
+# Genome browsers can help!
+
+.left-column[
+Few experiments at a time  
+Few genes at a time
+]
+.right-column[
+.centre[
+![:img_scale 80%](img/elf1_3.png)
+]
+]
+
+---
+class: inverse, middle, font200
+background-image: url("img/INRAE_genphyse_logo_wb.svg")
+
+# Interactive visualisations to foster data re-use
+
+<html>
+  <div style='float:left'></div>
+  <hr color='#423089' size=1px width=100%>
+</html>
+
+1. **Heat*seq: interactive correlation heatmaps of transcriptomics and epigenomics datasets**
+
+2. PEREpigenomics: Profile Explorer of Roadmap Epigenomics data
+
+3. VizFaDa: Visualisations of FAANG data 
+
+---
+
+# Correlation heatmaps for transcriptomics and TF ChIP-seq datasets
+
+![:img_scale 80%](img/heatstarseq_datasets.png)
+
+---
+
+# Heat*seq workflow
+
+.centre[
+![:img_scale 70%](img/heatstarseq_workflow.png)
+]
+
+---
+
+# HeatRNAseq workflow
+
+.centre[
+![:img_scale 70%](img/heatstarseq_rna.png)
+]
+
+---
+
+# HeatChIPseq workflow
+
+.centre[
+![:img_scale 70%](img/heatstarseq_chip.png)
+]
+
+---
+class: centre
+
+# Live Demo !
+
+.font200[
+`r emo::ji("crossed fingers")`
+
+[www.heatstarseq.roslin.ed.ac.uk](http://www.heatstarseq.roslin.ed.ac.uk/)
+]
+
+---
+
+# Heat*seq conclusions & perspectives
+
+- App: [www.heatstarseq.roslin.ed.ac.uk](http://www.heatstarseq.roslin.ed.ac.uk/)
+- Source code: [github.com/gdevailly/HeatStarSeq_gh](https://github.com/gdevailly/HeatStarSeq_gh)
+- Publication: [doi.org/10.1093/bioinformatics/btw407](https://doi.org/10.1093/bioinformatics/btw407)
+
+### Perspectives ?
+- More datasets! (also, update the old ones...)
+- More datatypes: Hitsone marks, gene lists, ...
+- Multiple use files
+- Gene name converter, liftover
+- Datasets with more that 1000 experiments?
+
+---
+
+# Heat*seq thanks:
+
+![:img_scale 80%](img/heatstarseq_thanks.png)
+
+---
+class: inverse, middle, font200
+background-image: url("img/INRAE_genphyse_logo_wb.svg")
+
+# Interactive visualisations to foster data re-use
+
+<html>
+  <div style='float:left'></div>
+  <hr color='#423089' size=1px width=100%>
+</html>
+
+1. Heat*seq: interactive correlation heatmaps of transcriptomics and epigenomics datasets
+
+2. **PEREpigenomics: Profile Explorer of Roadmap Epigenomics data**
+
+3. VizFaDa: Visualisations of FAANG data 
+
+---
+
+# The Roadmap Epigenomics dataset
+
+.pull-left[
+![](img/RoadmapEpigenomics.png)
+- RNA-seq
+- DNAse1
+- WGBS,
+- 10 different histone methylations
+- 17 different histone acetylations
+- 33 human cell lines & tissues
+- uniformly processed
+]
+
+.pull-right[
+![](img/main_illustration.png)
+]
+
+---
+
+# Objectives
+
+.pull-left[
+- Visualisation of marks, sorted by **gene** transcription level:
+  - at TSS (gene start)
+  - at TTS (gene end)
+- Visualisation of marks at **middle exons** starts, sorted by:
+  - transcription level
+  - inclusion ratio
+- For **all** genes/exons in **each** cell type.
+- For **each** gene/exon in **all** cell types.
+]
+
+.pull-right[
+![:img_scale 85%](img/h3k4me3_SI.png)
+]
+
+---
+class: inverse
+background-image: url("img/INRAE_genphyse_logo_wb.svg")
+
+# H3K4me3, TSS, small intestine
+
+.centre[
+![:img_scale 42%](img/h3k4me3_SI.png)
+]
+
+
+---
+class: font180
+
+# What is a gene?
+.pull-left[
+![:img_scale 100%](img/gencode22.png)
+]
+.pull-right[
+![:img_scale 53%](img/gene_types.png)
+]
+
+---
+class: font180
+
+# Where is BRCA1's Transcription Start Site (TSS)?
+![:img_scale 68%](img/Human_BRCA1_anno2.png)
+
+---
+# More genes than pixels on the device!
+
+.pull-left[
+![:img_scale 64%](img/overploting.png)
+]
+
+--
+.pull-right[
+```{r, echo=TRUE, eval=FALSE}
+image(my_matrix, useRaster = TRUE)
+```
+-> Reduce matrix dimension **before** plotting
+```{r, echo=TRUE, eval=FALSE}
+redim_matrix <- function(
+    mat,
+    target_height = 100,
+    target_width = 100,
+    summary_func = function(x) mean(x, na.rm = TRUE),
+    n_core = 1
+) {
+  ...
+}
+```
+
+`summary_func`: `mean()`, `max()`, `mean_color()`, ... 
+[cansnippet.bioinfo-fr.net/details.php?id=3](https://cansnippet.bioinfo-fr.net/details.php?id=3)
+
+]
+
+---
+class: centre
+
+# Ties shuffling
+.pull-left[
+![:img_scale 75%](img/E005_unshuffled.png)
+]
+
+--
+
+.pull-right[
+![:img_scale 75%](img/E005_shuffled.png)
+]
+
+
+---
+class: centre
+
+# Different gene types, different associations
+.pull-left[
+lincRNA  
+![:img_scale 75%](img/h3k4me3_SI_lincRNA.png)
+]
+.pull-right[
+processed pseudogenes  
+![:img_scale 75%](img/h3k4me3_SI_propseudo.png)
+]
+
+---
+class: centre
+
+# Position of signal
+.pull-left[
+DNAse 1 (accessible chromatin)  
+![:img_scale 75%](img/DNAse_SI.png)
+]
+.pull-right[
+H3K27ac  
+![:img_scale 75%](img/h3k27ac_SI.png)
+]
+
+---
+class: inverse, centre
+background-image: url("img/INRAE_genphyse_logo_wb.svg")
+
+# Exonic mark: H3K36me3, foetal large intestine
+
+![:img_scale 45%](img/H3K36me3.png)
+
+---
+class: font180
+
+# DNA methylation: ratio *and* density
+
+![:img_scale 90%](img/mCpG_density.svg)
+
+---
+class: font180
+
+# DNA methylation: ratio *and* density
+
+![:img_scale 100%](img/dname_ex1.png)
+
+---
+class: centre
+# DNA methylation at TSS
+
+WGBS, adult liver
+![:img_scale 60%](img/wgbs_TSS_gene_FPKM_E066_all.png)
+
+---
+class: centre
+# Exonic DNA methylation
+
+WGBS, pancreas  
+![:img_scale 60%](img/wgbs_panc_E098_all.png)
+
+---
+
+# Cell by cell *vs* gene by gene
+
+.pull-left[
+WGBS, adult liver
+![](img/wgbs_TSS_gene_FPKM_E066_all.png)
+]
+
+--
+
+.pull-right[
+```{r}
+lyl1 <- readRDS("data/lyl1_wgbs.rds")
+
+p <- ggplot(lyl1, aes(x = mCpG_ratio, y = log10(exp + 1))) +
+    geom_smooth(method = "lm", se = FALSE, linetype = "dotted") +
+    geom_point(aes(
+        text =  cell_type,
+        color = cell_type
+    )) +
+    theme_bw() +
+    theme(legend.position = "none") +
+    labs(x = "mean mCpG/CpG ratio at TSS +/-500bp", y = "log10(FPKM+1)", title = "LYL1 (ENSG00000104903)") +
+    annotate("text", x = 0.5, y = c(1.85, 1.65), label = c("slope: -2.71", "R²: 0.56"))
+
+ggplotly(p, tooltip = "text")
+
+```
+]
+
+---
+# Repressing and activating marks
+
+.pull-left[
+### mCpG ratio
+![:img_scale 80%](img/all_genes_wgbs.png)
+]
+
+--
+
+.pull-right[
+### H3K4me3
+![:img_scale 80%](img/all_genes_h3k4.png)
+]
+
+---
+class: inverse, centre
+background-image: url("img/INRAE_genphyse_logo_wb.svg")
+
+# Too many plots?
+
+.centre[
+![:img_scale 75%](img/explosion.png)
+]
+
+---
+# PEREpigenomics
+
+*P*rofile *E*xplorer of *R*oadmap *Epigenomic* data  
+[joshiapps.cbu.uib.no/perepigenomics_app/](https://joshiapps.cbu.uib.no/perepigenomics_app/)
+
+.centre[
+![:img_scale 50%](img/perepigenomics.png)
+]
+
+---
+# Summary of results
+
+.pull-left[
+```{r}
+bilan <- read_tsv("data/summary.tsv") %>%
+    rename(`center on TSS` = X4)
+ac <- grepl("ac$", bilan$mark)
+bilan <- bilan %>%
+    mutate(
+        `gene by gene` = cell_spec(`gene by gene`, "html", color = if_else(`gene by gene` == "positive", "darkgreen", "firebrick", missing = "grey")),
+        `cell type by cell type` = cell_spec(`cell type by cell type`, "html", color = if_else(`cell type by cell type` == "positive", "darkgreen", "firebrick", missing = "slateblue")),
+        `center on TSS` = if_else(is.na(`center on TSS`), "", "no"),
+        mark = cell_spec(mark, "html", background = case_when(
+            mark %in% c("WGBS", "DNAse", "H2A.Z" ) ~ "ivory",
+            grepl("ac$", mark) ~ "lightblue",
+            grepl("me", mark) ~ "paleturquoise",
+            TRUE ~ "grey"
+        ))
+    ) %>%
+    select(mark, `cell type by cell type`, `gene by gene`, `center on TSS`)
+
+left_part <- bilan[!ac, ]
+righ_part <- bilan[ac, ]
+
+left_part %>%
+    kable("html", escape = FALSE) %>%
+    kable_styling("striped", full_width = FALSE, font_size = 14)
+```
+]
+
+.pull-right[
+```{r}
+righ_part %>%
+    kable("html", escape = FALSE) %>%
+    kable_styling("striped", full_width = FALSE, font_size = 14)
+```
+
+]
+
+---
+
+## Conclusions
+
+PEREpigenomics offers interesting visualisations of epigenetic data gathered by
+Roadmap Epigenomics.
+
+## Perspectives
+
+- documentation
+- preprint
+- develop similar approach for [FAANG](http://data.faang.org/home) (Functional Annotation of the Animal Genomes) data
+
+---
+class: inverse, middle, font200
+background-image: url("img/INRAE_genphyse_logo_wb.svg")
+
+# Interactive visualisations to foster data re-use
+
+<html>
+  <div style='float:left'></div>
+  <hr color='#423089' size=1px width=100%>
+</html>
+
+1. Heat*seq: interactive correlation heatmaps of transcriptomics and epigenomics datasets
+
+2. PEREpigenomics: Profile Explorer of Roadmap Epigenomics data
+
+3. **VizFaDa: Visualisations of FAANG data** 
+.left[
+ANR Flash open sciences
+![:img_scale 25%](img/anr-logo.png)
+]
+
+---
+
+# VizFaDa: Visualisations of FAANG data
+
+.pull-left[
+![:img_scale 50%](img/FAANG_WebLogo.png)
+### The 'ENCODE' of farm animal genomes
+- open international consortium
+- sharing data about gene expression and regulation
+- metadata standards
+- open data: [data.faang.org](https://data.faang.org/home)
+]
+.pull-right[
+**Objective:** to provide interactive visualisations of FAANG data straight from the data portal
+![](img/data_faang_sh.png)
+]
+
+---
+
+# Expected results
+
+.pull-left[
+### Correlation heatmaps
+- broad view of the dataset
+- quick comparison with user-provided data
+- identification of outlier experiments 
+![](img/heatrnaseq_ex1.png)
+]
+.pull-right[
+### Stack profiles of epigenetic marks and gene expression level
+- rich and informative visualisations
+- can reveal complex biological or artefactual associations 
+![:img_scale 50%](img/h3k4me3_SI.png)
+]
+
+---
+
+# People involved
+We are recruiting (IE CDD 18m): [genphyse.toulouse.inra.fr/job-offers](https://genphyse.toulouse.inra.fr/content/bioinformatics-engineer-ie-fixed-term-18-months-inrae-toulouse-france)
+
+### GenPhySe:
+- **Guillaume Devailly**: data processing & visualisations
+- **Sylvain Foissac**: scientific expertise, link with FAANG
+
+### Sigenae:
+- **Philippe Bardou**: web application development
+- **Patrice Dehais**: system administrator
+
+### EMBL-EBI:
+- **Peter Harrison**: FAANG data coordination centre
+- **Guy Cochrane**: FAANG data coordination centre
+
+---
+class: inverse, centre
+background-image: url("img/INRAE_genphyse_logo_wb.svg")
+
+# Thank you for your attention!
+![:img_scale 60%](img/Super_Pig_bloomberg.gif)
+.font50[
+[www.bloomberg.com/news/features/2019-12-03/china-and-the-u-s-are-racing-to-create-a-super-pig](https://www.bloomberg.com/news/features/2019-12-03/china-and-the-u-s-are-racing-to-create-a-super-pig)
+]
